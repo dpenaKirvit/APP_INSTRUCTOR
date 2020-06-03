@@ -130,7 +130,17 @@ namespace SESION_PRACTICA.Logica
                 try
                 {
                     #region Senales_Overhead
+
+                    if (datosOmegas.Board0x21._OH_1_1_SW_2_DE.CambioVariable)
+                    {
+                        Console.WriteLine("OH_1_1_SW_2_DE " + "Estoy en " + datosOmegas.Board0x21._OH_1_1_SW_2_DE.Valor.ToString());
+                                    
+
+                    }
                     
+
+
+
                     if (datosOmegas.Board0x21._OH_1_1_SW_2_DE.erase)
                     {
                                            
