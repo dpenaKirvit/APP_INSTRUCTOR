@@ -1,0 +1,28 @@
+<?xml version="1.0" standalone="yes"?>
+<EsquemaCalibracion xmlns="http://tempuri.org/EsquemaCalibracion.xsd">
+  <Calibracion>
+    <Punto>1</Punto>
+    <Entrada>0</Entrada>
+    <Salida>0</Salida>
+  </Calibracion>
+  <Calibracion>
+    <Punto>2</Punto>
+    <Entrada>318</Entrada>
+    <Salida>318</Salida>
+  </Calibracion>
+  <Calibracion>
+    <Punto>3</Punto>
+    <Entrada>637</Entrada>
+    <Salida>637</Salida>
+  </Calibracion>
+  <Calibracion>
+    <Punto>4</Punto>
+    <Entrada>954</Entrada>
+    <Salida>954</Salida>
+  </Calibracion>
+  <Calibracion>
+    <Punto>5</Punto>
+    <Entrada>1273</Entrada>
+    <Salida>1273</Salida>
+  </Calibracion>
+</EsquemaCalibracion>

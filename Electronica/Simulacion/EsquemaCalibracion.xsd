@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="EsquemaCalibracion" targetNamespace="http://tempuri.org/EsquemaCalibracion.xsd" xmlns:mstns="http://tempuri.org/EsquemaCalibracion.xsd" xmlns="http://tempuri.org/EsquemaCalibracion.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+        </Connections>
+        <Tables>
+        </Tables>
+        <Sources>
+        </Sources>
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="EsquemaCalibracion" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="EsquemaCalibracion" msprop:Generator_DataSetName="EsquemaCalibracion">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Calibracion" msprop:Generator_UserTableName="Calibracion" msprop:Generator_RowDeletedName="CalibracionRowDeleted" msprop:Generator_TableClassName="CalibracionDataTable" msprop:Generator_RowChangedName="CalibracionRowChanged" msprop:Generator_RowClassName="CalibracionRow" msprop:Generator_RowChangingName="CalibracionRowChanging" msprop:Generator_RowEvArgName="CalibracionRowChangeEvent" msprop:Generator_RowEvHandlerName="CalibracionRowChangeEventHandler" msprop:Generator_TablePropName="Calibracion" msprop:Generator_TableVarName="tableCalibracion" msprop:Generator_RowDeletingName="CalibracionRowDeleting">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Punto" msprop:Generator_UserColumnName="Punto" msprop:Generator_ColumnPropNameInRow="Punto" msprop:Generator_ColumnVarNameInTable="columnPunto" msprop:Generator_ColumnPropNameInTable="PuntoColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="Entrada" msprop:Generator_UserColumnName="Entrada" msprop:Generator_ColumnPropNameInRow="Entrada" msprop:Generator_ColumnVarNameInTable="columnEntrada" msprop:Generator_ColumnPropNameInTable="EntradaColumn" type="xs:double" minOccurs="0" />
+              <xs:element name="Salida" msprop:Generator_UserColumnName="Salida" msprop:Generator_ColumnPropNameInRow="Salida" msprop:Generator_ColumnVarNameInTable="columnSalida" msprop:Generator_ColumnPropNameInTable="SalidaColumn" type="xs:double" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="PK">
+      <xs:selector xpath=".//mstns:Calibracion" />
+      <xs:field xpath="mstns:Punto" />
+    </xs:unique>
+  </xs:element>
+</xs:schema>

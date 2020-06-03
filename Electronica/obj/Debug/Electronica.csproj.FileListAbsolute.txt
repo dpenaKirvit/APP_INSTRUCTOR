@@ -1,0 +1,7 @@
+D:\DAVID_PEÑA\KV_IS3\1.AZURE_DEVOPS\APP_INSTRUCTOR\Electronica\obj\Debug\Electronica.csproj.CoreCompileInputs.cache
+D:\DAVID_PEÑA\KV_IS3\1.AZURE_DEVOPS\APP_INSTRUCTOR\Electronica\bin\Debug\Electronica.dll.config
+D:\DAVID_PEÑA\KV_IS3\1.AZURE_DEVOPS\APP_INSTRUCTOR\Electronica\bin\Debug\Electronica.dll
+D:\DAVID_PEÑA\KV_IS3\1.AZURE_DEVOPS\APP_INSTRUCTOR\Electronica\bin\Debug\Electronica.pdb
+D:\DAVID_PEÑA\KV_IS3\1.AZURE_DEVOPS\APP_INSTRUCTOR\Electronica\obj\Debug\Electronica.dll
+D:\DAVID_PEÑA\KV_IS3\1.AZURE_DEVOPS\APP_INSTRUCTOR\Electronica\obj\Debug\Electronica.pdb
+D:\DAVID_PEÑA\KV_IS3\1.AZURE_DEVOPS\APP_INSTRUCTOR\Electronica\obj\Debug\Electronica.csprojAssemblyReference.cache

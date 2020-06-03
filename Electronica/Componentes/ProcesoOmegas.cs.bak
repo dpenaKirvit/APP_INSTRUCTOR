@@ -1,0 +1,287 @@
+﻿using Electronica.Serial;
+using Electronica.Utilidades;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Electronica.Componentes
+{
+    public class ProcesoOmegas
+    {
+        const string cNombreComponente = "C130_Omegas";
+        #region Variables
+        private bool estaConectado;
+
+        private Queue<byte> bufferDatos;
+        private PuertoSerial pSerial;
+        private List<byte> tramaActual;
+
+        private VarBoard0x21 varBoard0x21;
+        private VarBoard0x22 varBoard0x22;
+        private VarBoard0x23 varBoard0x23;
+        private VarBoard0x24 varBoard0x24;
+        private VarBoard0x25 varBoard0x25;
+        private VarBoard0x26 varBoard0x26;
+        private VarBoard0x27 varBoard0x27;
+        private byte[] peticionCambioVariables;
+//        private byte[] peticionCambioVariables2;
+
+        #endregion Variables
+
+        #region Propiedades
+        public bool EstaConectado
+        {
+            get { return estaConectado; }
+        }
+        public VarBoard0x21 Board0x21 { get => varBoard0x21; }
+        public VarBoard0x22 Board0x22 { get => varBoard0x22; }
+        public VarBoard0x23 Board0x23 { get => varBoard0x23; }
+        public VarBoard0x24 Board0x24 { get => varBoard0x24; }
+        public VarBoard0x25 Board0x25 { get => varBoard0x25; }
+        public VarBoard0x26 Board0x26 { get => varBoard0x26; }
+        public VarBoard0x27 Board0x27 { get => varBoard0x27; }
+
+        #endregion Propiedades
+
+        public ProcesoOmegas()
+        {
+            peticionCambioVariables = Globales.ObtenerPeticion(CodigoBoard.Board0x21, TipoTrama.CambioVariables);
+//            peticionCambioVariables2 = Globales.ObtenerPeticion(CodigoBoard.Board0x22, TipoTrama.CambioVariables);
+
+
+            bufferDatos = new Queue<byte>();
+            pSerial = new PuertoSerial();
+            pSerial.Baudios = 115200;
+            pSerial.DtrEnable = true;
+            pSerial.TiempoEsperaBytes = 200;
+            tramaActual = new List<byte>();
+
+            varBoard0x21 = new VarBoard0x21();
+            varBoard0x22 = new VarBoard0x22();
+            varBoard0x23 = new VarBoard0x23();
+            varBoard0x24 = new VarBoard0x24();
+            varBoard0x25 = new VarBoard0x25();
+            varBoard0x26 = new VarBoard0x26();
+            varBoard0x27 = new VarBoard0x27();
+        }
+
+        #region Metodos Publicos
+        //PUERTO 0
+        public void Detectar()
+        {
+            estaConectado = false;
+            foreach (string s in pSerial.ObtenerPuertos())
+            {
+                if (VerificarPuerto(s))
+                {
+                    estaConectado = true;
+                    break;
+                }
+            }
+        }
+        public void Abrir()
+        {
+            pSerial.Abrir();
+        }
+
+        public void Cerrar()
+        {            
+            pSerial.Cerrar();
+        }
+        //PUERTO 0
+        public void Procesar()
+        {            
+            try
+            {
+                LeerDatos(peticionCambioVariables, 30);
+//                Thread.Sleep(200);
+//                LeerDatos(peticionCambioVariables2, 30);
+
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+        //PUERTO 0
+        public void Escribir()
+        {            
+            int tmpEspera = 20;
+            try
+            {
+                byte[] datos = varBoard0x21.Escribir();
+                if (datos.Length > 6)
+                {
+                    Thread.Sleep(tmpEspera);
+                    pSerial.EscribirPuerto(datos);
+                }
+                datos = varBoard0x22.Escribir();
+                if (datos.Length > 6)
+                {
+                    Thread.Sleep(tmpEspera);
+                    pSerial.EscribirPuerto(datos);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+        
+        #endregion Metodos Publicos
+
+        #region Metodos Privados
+        //PUERTO 0
+        private bool VerificarPuerto(string nomPuerto)
+        {
+            try
+            {
+                pSerial.NombrePuerto = nomPuerto;
+                pSerial.Abrir();
+
+                int tmpEspera = 100;
+                byte[] datos = pSerial.LeerBufferPuerto(varBoard0x21.SolicitudEstado, tmpEspera);
+                bool ok = ValidarRespuestaSolicitud(datos);
+                return ok;
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                pSerial.Cerrar();
+            }
+        }
+        //PUERTO 0
+        private bool ValidarRespuestaSolicitud(byte[] datos)
+        {
+            foreach (byte b in datos)
+            {
+                bufferDatos.Enqueue(b);
+            }
+
+            Queue<byte[]> tramas = BuscarTramas();
+
+            if (datos.Length <= 6)
+            {
+                return false;
+            }            
+            byte[] t = tramas.Peek();
+            if (t[0] != (byte)TipoByte.STX)
+            {
+                return false;
+            }
+            if (t[1] != (byte)CodigoBoard.Board0x21)
+            {
+                return false;
+            }
+            if (t[2] != (byte)TipoTrama.SolicitudEstado)
+            {
+                return false;
+            }
+            if (t[t.Length - 1] != (byte)TipoByte.ETX)
+            {
+                return false;
+            }
+            if (!Globales.ValidarDigitoChequeo(t))
+            {
+                return false;
+            }
+
+            //Procesa las variables
+            ProcesarTrama(tramas);  //MFMR PENDIENTE DEFINIR SI ES UNA O DOS
+            return true;
+        }
+        //PUERTO 0
+        private Queue<byte[]> BuscarTramas()
+        {
+            Queue<byte[]> tramas = new Queue<byte[]>();
+            if (bufferDatos != null)
+            {
+                while (bufferDatos.Count > 0)
+                {
+                    byte b = bufferDatos.Dequeue();
+                    if (tramaActual.Count == 0)
+                    {
+                        if (b == (byte)TipoByte.STX)
+                        {
+                            tramaActual.Add(b);
+                        }
+                    }
+                    else
+                    {
+                        tramaActual.Add(b);
+                        if (b == (byte)TipoByte.ETX)
+                        {
+                            if (tramaActual.Count > 6)
+                            {
+                                byte[] t = tramaActual.ToArray();
+                                if (Globales.ValidarDigitoChequeo(t))
+                                {
+                                    tramas.Enqueue(t);
+                                }
+                            }
+                            tramaActual.Clear();
+                        }
+                    }
+                }
+            }
+            return tramas;
+        }
+        //PUERTO 0
+        private void ProcesarTrama(Queue<byte[]> tramas)
+        {
+            //Inicializa las variables
+            while (tramas.Count > 0)
+            {
+                byte[] trama = tramas.Dequeue();
+                //Procesa cada una de las tramas en los componentes
+                if (trama[2] == (byte)TipoTrama.CambioVariables || trama[2] == (byte)TipoTrama.SolicitudEstado)
+                {
+                    switch (trama[1])
+                    {
+                        case (byte)CodigoBoard.Board0x21:
+                            varBoard0x21.Procesar(Globales.SepararVariables(trama));
+                            break;
+                        case (byte)CodigoBoard.Board0x22:
+                            varBoard0x22.Procesar(Globales.SepararVariables(trama));
+                            break;
+                    }
+                }
+            }
+        }
+        //PUERTO 0
+        private void LeerDatos(byte[] pet, int msEspera)
+        {
+            byte[] datos = pSerial.LeerBufferPuerto(pet, msEspera);
+            foreach (byte b in datos)
+            {
+                bufferDatos.Enqueue(b);
+            }
+            Queue<byte[]> tramas = BuscarTramas();
+            ProcesarTrama(tramas);
+        }
+        #endregion Metodos Privados
+
+        #region Eventos
+        private void pSerial_DatosRecibidos(object sender, byte[] datos)
+        {
+            if (datos != null)
+            {
+                foreach (byte b in datos)
+                {
+                    try
+                    {
+                        bufferDatos.Enqueue(b);
+                    }
+                    catch (Exception ex)
+                    {                        
+                    }
+                }
+            }
+        }
+        #endregion Eventos
+    }
+}
