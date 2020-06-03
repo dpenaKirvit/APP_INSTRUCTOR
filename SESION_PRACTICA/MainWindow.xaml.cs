@@ -22,6 +22,7 @@ namespace SESION_PRACTICA
     public partial class MainWindow : Window
     {
         DriverElectronica Driver_C130;
+		Consulta ConsultaInicial;
 		Dictionary<string, string> dictInstruments;
 
 		public MainWindow()
@@ -729,6 +730,8 @@ namespace SESION_PRACTICA
         private void B_Conectar_Click(object sender, RoutedEventArgs e)
         {
             Driver_C130 = new DriverElectronica();
+			ConsultaInicial = new Consulta();
+			ConsultaInicial.ObtenerInstrumentos();
             Driver_C130.DetectarDispositivos();
             Driver_C130.Iniciar(dictInstruments);
         }

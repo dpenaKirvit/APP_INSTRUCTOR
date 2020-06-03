@@ -352,6 +352,7 @@
     <Compile Include="Datos\TipoMaterial.cs" />
     <Compile Include="Datos\XpobjectType.cs" />
     <Compile Include="Datos\XpweakReference.cs" />
+    <Compile Include="Logica\Consulta.cs" />
     <Compile Include="Logica\DriverElectronica.cs" />
     <Compile Include="Logica\SenalAEtiqueta.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -360,6 +361,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Modelos\Mod_Etiqueta.cs" />
+    <Compile Include="Modelos\Mod_Instrumento.cs" />
+    <Compile Include="Modelos\Mod_Senales.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
