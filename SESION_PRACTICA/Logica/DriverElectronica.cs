@@ -38,6 +38,54 @@ namespace SESION_PRACTICA.Logica
             mov = new SenalAEtiqueta(datosOmegas);
         }
 
+
+       
+
+    public void Iniciar(IDictionary<string,string> DicInstruments) {
+            DicInstruments = dictInstrumentsRef;
+            try
+            {
+                procesar = false;
+                if (datosOmegas.EstaConectado)
+                {
+                    Console.WriteLine("Electrónica conectada");
+                    datosOmegas.Abrir();
+                    procesoOmegas = new Thread(new ThreadStart(ProcesarOmegas));
+                    procesar = true;
+                    procesoOmegas.Start();
+                    Console.WriteLine("Inicia el procesamiento de señales");
+                }
+                if (procesar)
+                {
+                    procesoPrincipal = new Thread(new ThreadStart(ProcesoPrincipal));
+                    procesoPrincipal.Start();
+                }
+                else 
+                {
+                    Console.WriteLine("Electrónica No conectada");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public void Cerrar()
+        {
+            procesar = false;
+            datosOmegas.Cerrar();
+        }
+        public void DetectarDispositivos()
+        {
+            datosOmegas.Detectar();
+            datosOmegas.Detectar2();
+            datosOmegas.Detectar3();
+        }
+
+
+
         private bool digitalSignalValue()
         {
             VarBoard0x21 a = datosOmegas.Board0x21;
@@ -82,8 +130,10 @@ namespace SESION_PRACTICA.Logica
                 try
                 {
                     #region Senales_Overhead
+                    
                     if (datosOmegas.Board0x21._OH_1_1_SW_2_DE.erase)
                     {
+                                           
                         string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_1_1_SW_2_DE.Nombre);
                         setDictInstrument(inst);
                         datosOmegas.Board0x21._OH_1_1_SW_2_DE.erase = false;
@@ -3046,7 +3096,34 @@ namespace SESION_PRACTICA.Logica
 
         }
 
+        private void ProcesarOmegas()
+        {
+            while (procesar)
+            {
+                try
+                {
+                    datosOmegas.Procesar();
+                    datosOmegas.Procesar2();
+                    datosOmegas.Procesar3();
+                    Thread.Sleep(10);
+                    datosOmegas.Escribir();
+                    datosOmegas.Escribir2();
+                    datosOmegas.Escribir3();
+                }
+                catch (Exception ex)
+                {
+                    ProcesarError(ex.Message, Dispositivo.Omegas);
+                }
+            }
+        }
 
+        private void ProcesarError(string error, Dispositivo disp)
+        {
+            if (err != null)
+            {
+                this.err(error, disp);
+            }
+        }
 
 
 
