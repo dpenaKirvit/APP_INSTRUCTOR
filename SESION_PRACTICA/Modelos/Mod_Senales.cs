@@ -28,7 +28,10 @@
         }
 
         public Mod_Senales() { }
-        public Mod_Senales(string IDPrt, string NombreSen, string Valor) { 
+        public Mod_Senales(string IDPrt, string NombreSen, string ValorSen) {
+            IDProtocolo = IDPrt;
+            NombreSenal = NombreSen;
+            Valor = ValorSen;
         
         }
     }
