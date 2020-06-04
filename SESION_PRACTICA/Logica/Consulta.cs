@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,11 +17,13 @@ namespace SESION_PRACTICA.Logica
         KIRVIT_AppContext DB;
         ListadoInstrumentos InstrumentosActuales;
         ListadoSenales SenalesActuales;
+        ListadoEtiquetas EtiquetasActuales;
         public Consulta()
         {
             DB = new KIRVIT_AppContext();
             SenalesActuales = new ListadoSenales();
             InstrumentosActuales = new ListadoInstrumentos();
+            EtiquetasActuales = new ListadoEtiquetas();
             ConsultaInicial();
         }
 
@@ -33,13 +36,24 @@ namespace SESION_PRACTICA.Logica
 
             var InstrumentosEnDB = from q in DB.Instrumento
                                    select q;
+
+            var EtiquetasEnDB = from e in DB.Etiqueta
+                                select e;
+
+            var LabelSignalsDB = from l in DB.LabelSignalsEtiquetas
+                                 select l;
+
             var Lista_Instrumentos = InstrumentosEnDB.ToList();
             var Lista_Senales = SenalesEnDB.ToList();
+            var Lista_Etiquetas = EtiquetasEnDB.ToList();
+            var Lista_LabelSignals = LabelSignalsDB.ToList();
 
             var SenalesAgrupadas = Lista_Senales.GroupBy(g => g.Instrumento).ToList();
+            var LabelAgrupados = Lista_LabelSignals.GroupBy(g => g.Etiquetas).ToList();
 
             SenalesActuales = ObtenerSenales(SenalesAgrupadas);
             InstrumentosActuales = ObtenerInstrumentos(SenalesAgrupadas, Lista_Instrumentos, SenalesActuales);
+            EtiquetasActuales = ObtenerEtiquetas(LabelAgrupados, InstrumentosActuales, Lista_Etiquetas);
         }
         public ListadoSenales getListadoSenales()
         {
@@ -52,6 +66,11 @@ namespace SESION_PRACTICA.Logica
 
         }
 
+        public ListadoEtiquetas getEtiquetas()
+        {
+            return EtiquetasActuales;
+        }
+
         private ListadoSenales ObtenerSenales(List<IGrouping<int?, SenalElectronica>> SenalesAgrupadas)
         {
             foreach (var item in SenalesAgrupadas)
@@ -61,7 +80,7 @@ namespace SESION_PRACTICA.Logica
                 var Nombre_SenaleS_Asociadas = item.Select(x => x.Nombre).ToArray();//Listado Nombres Senales Asociadas
                 for (int i = 0; i < Id_Senales_Asociadas.Length; i++)
                 {
-                    Mod_Senales Senal = new Mod_Senales(Id_Senales_Asociadas[i], Nombre_SenaleS_Asociadas[i], "0");
+                    Mod_Senales Senal = new Mod_Senales(Id_Senales_Asociadas[i], Nombre_SenaleS_Asociadas[i], false);
                     SenalesActuales.Add(Senal);
                 }
             }
@@ -74,29 +93,55 @@ namespace SESION_PRACTICA.Logica
 
             foreach (var item in Instrumentos)
             {
-                
-                var SenalesXInstrumento = SenalesAgrupadas.FirstOrDefault(o => o.Key.Equals(item.Oid)).Select(x => x.Id).ToArray();
-                var NombreInstrumento = item.NombreInstrumento;
-                var IdInstrumento = item.Oid;
-                Mod_Senales[] Senales = new Mod_Senales[SenalesXInstrumento.Length];
-                for (int i = 0; i < SenalesXInstrumento.Length; i++)
+                if (SenalesAgrupadas.Find(x => x.Key == item.Oid) != null)
                 {
+                    var SenalesXInstrumento = SenalesAgrupadas.FirstOrDefault(o => o.Key.Equals(item.Oid)).Select(x => x.Id).ToArray();
 
-                    if (SenalesXInstrumento[i].Equals(SenalesActuales.Select(o => o.IDProtocolo)))
+                    var NombreInstrumento = item.NombreInstrumento;
+                    var IdInstrumento = item.Oid;
+                    Mod_Senales[] Senales = new Mod_Senales[SenalesXInstrumento.Length];
+                    for (int i = 0; i < SenalesXInstrumento.Length; i++)
                     {
-                        Senales[i] = SenalesActuales.FirstOrDefault(o => o.IDProtocolo.Equals(SenalesXInstrumento[i]));
+                      
+
+                        if (SenalesXInstrumento[i].Equals(SenalesActuales.FirstOrDefault(o => o.IDProtocolo.Equals(SenalesXInstrumento[i])).IDProtocolo))
+                        {
+                            Senales[i] = SenalesActuales.FirstOrDefault(o => o.IDProtocolo.Equals(SenalesXInstrumento[i]));
+                        }
                     }
+                    Mod_Instrumento InstrumentoDummy = new Mod_Instrumento(IdInstrumento, NombreInstrumento, Senales);
+                    InstrumentosActuales.Add(InstrumentoDummy);
                 }
-                Mod_Instrumento InstrumentoDummy = new Mod_Instrumento(IdInstrumento, NombreInstrumento, Senales);
-                InstrumentosActuales.Add(InstrumentoDummy);
+                else {
+                    var NombreInstrumento = item.NombreInstrumento;
+                    var IdInstrumento = item.Oid;
+                    Mod_Senales[] Senales = new Mod_Senales[0];
+                    Mod_Instrumento InstrumentoDummy = new Mod_Instrumento(IdInstrumento, NombreInstrumento, Senales);
+                    InstrumentosActuales.Add(InstrumentoDummy);
+
+                }
 
             }
             return InstrumentosActuales;
 
-
-
-
-
         }
+
+        private ListadoEtiquetas ObtenerEtiquetas(List<IGrouping<int?, LabelSignalsEtiquetas>> LabelAgrupados, ListadoInstrumentos Instrumentos, List<Etiqueta> Etiquetas)
+        {
+            foreach (var item in LabelAgrupados)
+            {
+                var ValorEtiquetasAsociadas= item.Select(x => x.Etiquetas).ToArray();
+                var IdEtiqueta = item.Key;
+                var NombreEtiqueta = Etiquetas.FirstOrDefault(x=>x.Oid.Equals(item.Key)).Nombre;
+                var InstrumentoAsociado = Instrumentos.FirstOrDefault(y=> Etiquetas.FirstOrDefault(x=>x.Oid.Equals(item.Key)).Instrumento.Equals(y.ID));
+                Mod_Etiqueta _Etiquetas = new Mod_Etiqueta(IdEtiqueta, NombreEtiqueta, ValorEtiquetasAsociadas, InstrumentoAsociado);
+                EtiquetasActuales.Add(_Etiquetas);
+            }
+                    
+            
+
+            return EtiquetasActuales;
+        }
+
     }
 }

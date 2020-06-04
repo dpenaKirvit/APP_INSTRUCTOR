@@ -10,7 +10,7 @@ namespace SESION_PRACTICA.Modelos
     {
         private string _idprotocolo;
         private string _nombresenal;
-        private string _valor;
+        private bool _valor;
   
 
         public string IDProtocolo
@@ -27,7 +27,7 @@ namespace SESION_PRACTICA.Modelos
 
         }
 
-        public string Valor
+        public bool Valor
         {
             get { return _valor; }
             set { _valor= value; }
@@ -36,7 +36,7 @@ namespace SESION_PRACTICA.Modelos
 
         public Mod_Senales() { }
 
-        public Mod_Senales(string IDPrt, string NombreSen, string ValorSen) {
+        public Mod_Senales(string IDPrt, string NombreSen, bool ValorSen) {
             IDProtocolo = IDPrt;
             NombreSenal = NombreSen;
             Valor = ValorSen;

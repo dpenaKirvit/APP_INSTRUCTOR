@@ -26,11 +26,20 @@ namespace SESION_PRACTICA
 		Consulta ConsultaInicial;
 		ListadoSenales X;
 		ListadoInstrumentos Y;
+		ListadoEtiquetas Z;
 		Dictionary<string, string> dictInstruments;
 
 		public MainWindow()
         {
-            InitializeComponent();
+			ConsultaInicial = new Consulta();
+			X = ConsultaInicial.getListadoSenales(); //Listado de todos los instrumentos
+			Console.WriteLine("Consulta 1");
+			Y = ConsultaInicial.getInstrumentos();//Listado de todas las etiquetas
+			Console.WriteLine("Consulta 2");
+			Z = ConsultaInicial.getEtiquetas();
+			Console.WriteLine("Consulta 3"); 
+
+			InitializeComponent();
 			dictInstruments = new Dictionary<string, string>()
 			{
 			{"CHECK","" },
@@ -733,9 +742,8 @@ namespace SESION_PRACTICA
         private void B_Conectar_Click(object sender, RoutedEventArgs e)
         {
             Driver_C130 = new DriverElectronica();
-			ConsultaInicial = new Consulta();
-			 X = ConsultaInicial.getListadoSenales();
-			Y = ConsultaInicial.getInstrumentos();
+				
+			
             Driver_C130.DetectarDispositivos();
             Driver_C130.Iniciar(dictInstruments);
         }
