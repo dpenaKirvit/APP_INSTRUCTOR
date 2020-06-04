@@ -1,10 +1,17 @@
-﻿namespace SESION_PRACTICA.Modelos
+﻿using System.Collections.ObjectModel;
+
+namespace SESION_PRACTICA.Modelos
 {
+    public class ListadoSenales : ObservableCollection<Mod_Senales>
+    {
+
+    }
     public class Mod_Senales
     {
         private string _idprotocolo;
         private string _nombresenal;
         private string _valor;
+  
 
         public string IDProtocolo
         {
@@ -28,6 +35,7 @@
         }
 
         public Mod_Senales() { }
+
         public Mod_Senales(string IDPrt, string NombreSen, string ValorSen) {
             IDProtocolo = IDPrt;
             NombreSenal = NombreSen;

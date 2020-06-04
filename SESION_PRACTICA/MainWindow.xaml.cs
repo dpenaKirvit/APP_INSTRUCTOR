@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using SESION_PRACTICA.Logica;
+using SESION_PRACTICA.Modelos;
 
 namespace SESION_PRACTICA
 {
@@ -23,6 +24,8 @@ namespace SESION_PRACTICA
     {
         DriverElectronica Driver_C130;
 		Consulta ConsultaInicial;
+		ListadoSenales X;
+		ListadoInstrumentos Y;
 		Dictionary<string, string> dictInstruments;
 
 		public MainWindow()
@@ -731,7 +734,8 @@ namespace SESION_PRACTICA
         {
             Driver_C130 = new DriverElectronica();
 			ConsultaInicial = new Consulta();
-			ConsultaInicial.ObtenerInstrumentos();
+			 X = ConsultaInicial.getListadoSenales();
+			Y = ConsultaInicial.getInstrumentos();
             Driver_C130.DetectarDispositivos();
             Driver_C130.Iniciar(dictInstruments);
         }
