@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Electronica.Componentes;
+using SESION_PRACTICA.Modelos;
 
 namespace SESION_PRACTICA.Logica
 {
@@ -25,6 +26,7 @@ namespace SESION_PRACTICA.Logica
         private Thread procesoOmegas;
         private bool procesar;
         IDictionary<string, string> dictInstrumentsRef;
+        private ListadoInstrumentos _Instrumentos;
         SenalAEtiqueta mov;
 
         public bool EstaOmegas
@@ -41,13 +43,15 @@ namespace SESION_PRACTICA.Logica
 
        
 
-    public void Iniciar(IDictionary<string,string> DicInstruments) {
-            DicInstruments = dictInstrumentsRef;
+    public void Iniciar(ListadoInstrumentos Instrumentos, ListadoEtiquetas Etiquetas, ListadoSenales Senales) {
+           
             try
             {
+                _Instrumentos = Instrumentos;
                 procesar = false;
                 if (datosOmegas.EstaConectado)
                 {
+
                     Console.WriteLine("Electrónica conectada");
                     datosOmegas.Abrir();
                     procesoOmegas = new Thread(new ThreadStart(ProcesarOmegas));
@@ -134,7 +138,9 @@ namespace SESION_PRACTICA.Logica
                     if (datosOmegas.Board0x21._OH_1_1_SW_2_DE.CambioVariable)
                     {
                         Console.WriteLine("OH_1_1_SW_2_DE " + "Estoy en " + datosOmegas.Board0x21._OH_1_1_SW_2_DE.Valor.ToString());
-                                    
+                        var CodSenal = datosOmegas.Board0x21._OH_1_1_SW_2_DE.Id;
+                        var Nombre = _Instrumentos.Select(x=>x.Senales.FirstOrDefault(y=>y.IDProtocolo.Equals(CodSenal)));
+                        Console.WriteLine(Nombre);
 
                     }
                     
