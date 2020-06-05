@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,14 +32,17 @@ namespace SESION_PRACTICA
 
 		public MainWindow()
         {
+			Stopwatch timer = new Stopwatch();
+			timer.Start();
 			ConsultaInicial = new Consulta();
 			SenalesActuales = ConsultaInicial.getListadoSenales(); //Listado de todos los instrumentos
 			Console.WriteLine("Consulta 1");
 			InstrumentosActuales = ConsultaInicial.getInstrumentos();//Listado de todas las etiquetas
 			Console.WriteLine("Consulta 2");
 			EtiquetasActuales = ConsultaInicial.getEtiquetas();
-			Console.WriteLine("Consulta 3"); 
-
+			Console.WriteLine("Consulta 3");
+			timer.Stop();
+			Console.WriteLine("Elapsed time: " + timer.ElapsedMilliseconds.ToString());
 			InitializeComponent();
 			
 		}
