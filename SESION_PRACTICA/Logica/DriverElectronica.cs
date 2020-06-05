@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Electronica.Componentes;
+using Microsoft.EntityFrameworkCore.Internal;
 using SESION_PRACTICA.Modelos;
 
 namespace SESION_PRACTICA.Logica
@@ -27,6 +29,7 @@ namespace SESION_PRACTICA.Logica
         private bool procesar;
         IDictionary<string, string> dictInstrumentsRef;
         private ListadoInstrumentos _Instrumentos;
+        private ListadoEtiquetas _Etiquetas;
         SenalAEtiqueta mov;
 
         public bool EstaOmegas
@@ -41,13 +44,14 @@ namespace SESION_PRACTICA.Logica
         }
 
 
-       
 
-    public void Iniciar(ListadoInstrumentos Instrumentos, ListadoEtiquetas Etiquetas, ListadoSenales Senales) {
-           
+
+        public void Iniciar(ListadoInstrumentos Instrumentos, ListadoEtiquetas Etiquetas, ListadoSenales Senales) {
+
             try
             {
                 _Instrumentos = Instrumentos;
+                _Etiquetas = Etiquetas;
                 procesar = false;
                 if (datosOmegas.EstaConectado)
                 {
@@ -64,11 +68,11 @@ namespace SESION_PRACTICA.Logica
                     procesoPrincipal = new Thread(new ThreadStart(ProcesoPrincipal));
                     procesoPrincipal.Start();
                 }
-                else 
+                else
                 {
                     Console.WriteLine("Electrónica No conectada");
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -117,6 +121,22 @@ namespace SESION_PRACTICA.Logica
             return ret;
         }
 
+        private void HallarInstrumento (Electronica.Simulacion.VariableDigital<bool> variableDigital, ListadoInstrumentos _instrumentos)
+        {
+            var CodSenal = variableDigital.Id.ToString();
+            var PosInstrumento = _Instrumentos.Select(x => x.Senales.FirstOrDefault(z => z.IDProtocolo.Equals(CodSenal))).ToList().FindIndex(x => x != null);
+            var Nombre_Instrumento = _Instrumentos.Select(x => x.Nombre).ElementAt(PosInstrumento).ToString();
+            var Instrumento_Actual = _Instrumentos.ElementAt(PosInstrumento);
+            _Instrumentos.ElementAt(PosInstrumento).Senales.FirstOrDefault(x => x.IDProtocolo == CodSenal).Valor = variableDigital.Valor;
+            Console.WriteLine("Instrumento presionado: " + Nombre_Instrumento);
+            Console.WriteLine(variableDigital.Nombre + "Estoy en " + variableDigital.Valor.ToString());
+           
+            
+            var Etiqueta = Instrumento_Actual.EtiquetaActual(_Etiquetas, Instrumento_Actual);
+            Console.WriteLine("Etiqueta Actual: " + Etiqueta);
+
+        }
+
         private void ProcesoPrincipal() {
 
             #region CodigoOSC
@@ -137,323 +157,173 @@ namespace SESION_PRACTICA.Logica
 
                     if (datosOmegas.Board0x21._OH_1_1_SW_2_DE.CambioVariable)
                     {
-                        Console.WriteLine("OH_1_1_SW_2_DE " + "Estoy en " + datosOmegas.Board0x21._OH_1_1_SW_2_DE.Valor.ToString());
-                        var CodSenal = datosOmegas.Board0x21._OH_1_1_SW_2_DE.Id;
-                        var Nombre = _Instrumentos.Select(x=>x.Senales.FirstOrDefault(y=>y.IDProtocolo.Equals(CodSenal)));
-                        Console.WriteLine(Nombre);
+                        HallarInstrumento(datosOmegas.Board0x21._OH_1_1_SW_2_DE, _Instrumentos);
+                    }
+                                     
+                    if (datosOmegas.Board0x21._OH_1_2_SW_2_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_1_2_SW_2_DE, _Instrumentos);
+                    }
+                    if (datosOmegas.Board0x21._OH_1_3_SW_2_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_1_3_SW_2_DE, _Instrumentos);
+                    }
+                    if (datosOmegas.Board0x21._OH_1_4_SW_2_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_1_4_SW_2_DE, _Instrumentos);
+                    }
+                    if (datosOmegas.Board0x21._OH_2_2_SW_3_1_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_2_2_SW_3_1_DE, _Instrumentos);
 
                     }
-                    
-
-
-
-                    if (datosOmegas.Board0x21._OH_1_1_SW_2_DE.erase)
+                    if (datosOmegas.Board0x21._OH_2_2_SW_3_2_DE.CambioVariable)
                     {
-                                           
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_1_1_SW_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_1_1_SW_2_DE.erase = false;
+                        HallarInstrumento(datosOmegas.Board0x21._OH_2_2_SW_3_2_DE, _Instrumentos);
                     }
-                    if (datosOmegas.Board0x21._OH_1_2_SW_2_DE.erase)
+                    if (datosOmegas.Board0x21._OH_3_1_SW_2_DE.CambioVariable)
                     {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_1_2_SW_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_1_2_SW_2_DE.erase = false;
+                        HallarInstrumento(datosOmegas.Board0x21._OH_3_1_SW_2_DE, _Instrumentos);
                     }
-                    if (datosOmegas.Board0x21._OH_1_3_SW_2_DE.erase)
+                    if (datosOmegas.Board0x21._OH_3_2_SW_2_DE.CambioVariable)
                     {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_1_3_SW_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_1_3_SW_2_DE.erase = false;
+                        HallarInstrumento(datosOmegas.Board0x21._OH_3_2_SW_2_DE, _Instrumentos);
                     }
-                    if (datosOmegas.Board0x21._OH_1_4_SW_2_DE.erase)
+                    if (datosOmegas.Board0x21._OH_3_3_SW_2_DE.CambioVariable)
                     {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_1_4_SW_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_1_4_SW_2_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_2_2_SW_3_1_DE.erase)
-                    {
-                        datosOmegas.Board0x21.OH_2_1_PH_2_M_G_DS = datosOmegas.Board0x21.OH_2_2_SW_3_1_DE();
-                        datosOmegas.Board0x21.OH_2_3_PH_2_M_G_DS = datosOmegas.Board0x21.OH_2_2_SW_3_1_DE();
-                        datosOmegas.Board0x21.OH_2_4_PH_2_M_G_DS = datosOmegas.Board0x21.OH_2_2_SW_3_1_DE();
-                        datosOmegas.Board0x21.OH_2_5_PH_2_M_G_DS = datosOmegas.Board0x21.OH_2_2_SW_3_1_DE();
-
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_2_2_SW_3_1_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_2_2_SW_3_1_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_2_2_SW_3_2_DE.erase)
-                    {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_2_2_SW_3_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_2_2_SW_3_2_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_3_1_SW_2_DE.erase)
-                    {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_3_1_SW_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_3_1_SW_2_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_3_2_SW_2_DE.erase)
-                    {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_3_2_SW_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_3_2_SW_2_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_3_3_SW_2_DE.erase)
-                    {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_3_3_SW_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_3_3_SW_2_DE.erase = false;
+                        HallarInstrumento(datosOmegas.Board0x21._OH_3_3_SW_2_DE, _Instrumentos);
                     }
 
-                    if (datosOmegas.Board0x21._OH_6_4_SW_2_DE.erase)
+                    if (datosOmegas.Board0x21._OH_6_4_SW_2_DE.CambioVariable)
                     {
 
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_4_SW_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_4_SW_2_DE.erase = false;
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_4_SW_2_DE, _Instrumentos);
                     }
-                    if (datosOmegas.Board0x21._OH_6_5_RS_5_1_DE.erase)
+                    if (datosOmegas.Board0x21._OH_6_5_RS_5_1_DE.CambioVariable)
                     {
 
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_5_RS_5_1_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_5_RS_5_1_DE.erase = false;
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_5_RS_5_1_DE, _Instrumentos);
                     }
-                    if (datosOmegas.Board0x21._OH_6_5_RS_5_2_DE.erase)
+                    if (datosOmegas.Board0x21._OH_6_5_RS_5_2_DE.CambioVariable)
                     {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_5_RS_5_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_5_RS_5_2_DE.erase = false;
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_5_RS_5_2_DE, _Instrumentos);
                     }
-                    if (datosOmegas.Board0x21._OH_6_5_RS_5_3_DE.erase)
+                    if (datosOmegas.Board0x21._OH_6_5_RS_5_3_DE.CambioVariable)
                     {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_5_RS_5_3_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_5_RS_5_3_DE.erase = false;
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_5_RS_5_3_DE, _Instrumentos);
                     }
-                    if (datosOmegas.Board0x21._OH_6_5_RS_5_4_DE.erase)
+                    if (datosOmegas.Board0x21._OH_6_5_RS_5_4_DE.CambioVariable)
                     {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_5_RS_5_4_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_5_RS_5_4_DE.erase = false;
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_5_RS_5_4_DE, _Instrumentos);
                     }
-                    if (datosOmegas.Board0x21._OH_6_5_RS_5_5_DE.erase)
+                    if (datosOmegas.Board0x21._OH_6_5_RS_5_5_DE.CambioVariable)
                     {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_5_RS_5_5_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_5_RS_5_5_DE.erase = false;
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_5_RS_5_5_DE, _Instrumentos);
                     }
-                    if (datosOmegas.Board0x21._OH_6_6_RS_4_1_DE.erase)
+                    if (datosOmegas.Board0x21._OH_6_6_RS_4_1_DE.CambioVariable)
                     {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_6_RS_4_1_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_6_RS_4_1_DE.erase = false;
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_6_RS_4_1_DE, _Instrumentos);
                     }
-                    if (datosOmegas.Board0x21._OH_6_6_RS_4_2_DE.erase)
+                    if (datosOmegas.Board0x21._OH_6_6_RS_4_2_DE.CambioVariable)
                     {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_6_RS_4_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_6_RS_4_2_DE.erase = false;
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_6_RS_4_2_DE, _Instrumentos);
                     }
-                    if (datosOmegas.Board0x21._OH_6_6_RS_4_3_DE.erase)
+                    if (datosOmegas.Board0x21._OH_6_6_RS_4_3_DE.CambioVariable)
                     {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_6_RS_4_3_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_6_RS_4_3_DE.erase = false;
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_6_RS_4_3_DE, _Instrumentos);
                     }
-                    if (datosOmegas.Board0x21._OH_6_6_RS_4_4_DE.erase)
+                    if (datosOmegas.Board0x21._OH_6_6_RS_4_4_DE.CambioVariable)
                     {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_6_RS_4_4_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_6_RS_4_4_DE.erase = false;
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_6_RS_4_4_DE, _Instrumentos);
                     }
 
-
-                    if (datosOmegas.Board0x21._OH_6_7_SW_2_DE.erase)
+                    if (datosOmegas.Board0x21._OH_6_7_SW_2_DE.CambioVariable)
                     {
-
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_7_SW_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_7_SW_2_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_6_10_SW_4_1_DE.erase)
-                    {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_10_SW_4_1_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_10_SW_4_1_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_6_10_SW_4_2_DE.erase)
-                    {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_10_SW_4_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_10_SW_4_2_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_6_10_SW_4_3_DE.erase)
-                    {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_10_SW_4_3_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_10_SW_4_3_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_6_12_SW_2_DE.erase)
-                    {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_12_SW_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_12_SW_2_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_6_13_SW_3_1_DE.erase)
-                    {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_13_SW_3_1_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_13_SW_3_1_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_6_13_SW_3_2_DE.erase)
-                    {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_13_SW_3_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_13_SW_3_2_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_6_14_SW_2_DE.erase)
-                    {
-                        if (datosOmegas.Board0x21._OH_6_14_SW_2_DE.Valor)
-                        {
-
-                            datosOmegas.Board0x21.OH_6_9_MN_1_AS = 4000;
-
-
-                        }
-                        else
-                        {
-                            datosOmegas.Board0x21.OH_6_9_MN_1_AS = 000;
-
-                        }
-
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_14_SW_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_14_SW_2_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_6_15_SW_2_DE.erase)
-                    {
-                        if (datosOmegas.Board0x21._OH_6_15_SW_2_DE.Valor)
-                        {
-
-                            datosOmegas.Board0x21.OH_6_8_MN_1_AS = 4000;
-
-
-                        }
-                        else
-                        {
-                            datosOmegas.Board0x21.OH_6_8_MN_1_AS = 000;
-
-                        }
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_15_SW_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_15_SW_2_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_6_16_SW_4_1_DE.erase)
-                    {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_16_SW_4_1_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_16_SW_4_1_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_6_16_SW_4_2_DE.erase)
-                    {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_16_SW_4_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_16_SW_4_2_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_6_16_SW_4_3_DE.erase)
-                    {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_6_16_SW_4_3_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_6_16_SW_4_3_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_7_3_SW_2_DE.erase)
-                    {
-                        datosOmegas.Board0x21.OH_7_5_PH_2_DS = datosOmegas.Board0x21.OH_7_3_SW_2_DE();
-                        datosOmegas.Board0x21.OH_7_6_PH_2_DS = datosOmegas.Board0x21.OH_7_3_SW_2_DE();
-                        datosOmegas.Board0x21.OH_7_7_PH_2_DS = datosOmegas.Board0x21.OH_7_3_SW_2_DE();
-
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_7_3_SW_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_7_3_SW_2_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_7_4_SW_3_1_DE.erase)
-                    {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_7_4_SW_3_1_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_7_4_SW_3_1_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_7_4_SW_3_2_DE.erase)
-                    {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_7_4_SW_3_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_7_4_SW_3_2_DE.erase = false;
-                    }
-
-
-                    if (datosOmegas.Board0x21._OH_5_1_SW_3_1_DE.erase)
-                    {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_5_1_SW_3_1_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_5_1_SW_3_1_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_5_1_SW_3_2_DE.erase)
-                    {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_5_1_SW_3_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_5_1_SW_3_2_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_5_2_SW_2_DE.erase)
-                    {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_5_2_SW_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_5_2_SW_2_DE.erase = false;
-                    }
-                    if (datosOmegas.Board0x21._OH_5_3_SW_2_DE.erase)
-                    {
-                        if (datosOmegas.Board0x21._OH_5_3_SW_2_DE.Valor)
-                        {
-                            datosOmegas.Board0x21.OH_5_5_MN_1_AS = 4000;
-
-                        }
-                        else
-                        {
-                            datosOmegas.Board0x21.OH_5_5_MN_1_AS = 0;
-
-                        }
-
-
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x21._OH_5_3_SW_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x21._OH_5_3_SW_2_DE.erase = false;
-
-
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_7_SW_2_DE, _Instrumentos);
 
                     }
-
-                    if (datosOmegas.Board0x22._OH_8_1_PH_2_DE.erase)
+                    if (datosOmegas.Board0x21._OH_6_10_SW_4_1_DE.CambioVariable)
                     {
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x22._OH_8_1_PH_2_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x22._OH_8_1_PH_2_DE.erase = false;
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_10_SW_4_1_DE, _Instrumentos);
                     }
-                    if (datosOmegas.Board0x22._OH_8_2_SW_3_1_DE.erase)
+                    if (datosOmegas.Board0x21._OH_6_10_SW_4_2_DE.CambioVariable)
                     {
-                        //                        // AQUI VAN LAS DEL 8
-                        datosOmegas.Board0x22.OH_8_12_PH_2_DS = datosOmegas.Board0x22.OH_8_2_SW_3_1_DE();
-                        datosOmegas.Board0x22.OH_8_36_PH_2_DS = datosOmegas.Board0x22.OH_8_2_SW_3_1_DE();
-                        datosOmegas.Board0x22.OH_8_37_PH_2_DS = datosOmegas.Board0x22.OH_8_2_SW_3_1_DE();
-                        datosOmegas.Board0x22.OH_8_38_PH_2_DS = datosOmegas.Board0x22.OH_8_2_SW_3_1_DE();
-                        datosOmegas.Board0x22.OH_8_40_PH_2_DS = datosOmegas.Board0x22.OH_8_2_SW_3_1_DE();
-                        datosOmegas.Board0x22.OH_8_41_PH_2_DS = datosOmegas.Board0x22.OH_8_2_SW_3_1_DE();
-                        datosOmegas.Board0x22.OH_8_42_PH_2_DS = datosOmegas.Board0x22.OH_8_2_SW_3_1_DE();
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_10_SW_4_2_DE, _Instrumentos);
+                    }
+                    if (datosOmegas.Board0x21._OH_6_10_SW_4_3_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_10_SW_4_3_DE, _Instrumentos);
+                    }
+                    if (datosOmegas.Board0x21._OH_6_12_SW_2_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_10_SW_4_3_DE, _Instrumentos);
+                    }
+                    if (datosOmegas.Board0x21._OH_6_13_SW_3_1_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_13_SW_3_1_DE, _Instrumentos);
+                    }
+                    if (datosOmegas.Board0x21._OH_6_13_SW_3_2_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_13_SW_3_2_DE, _Instrumentos);
+                    }
+                    if (datosOmegas.Board0x21._OH_6_14_SW_2_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_14_SW_2_DE, _Instrumentos);
+                    }
+                    if (datosOmegas.Board0x21._OH_6_15_SW_2_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_15_SW_2_DE, _Instrumentos);
+                    }
+                    if (datosOmegas.Board0x21._OH_6_16_SW_4_1_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_16_SW_4_1_DE, _Instrumentos);
+                    }
+                    if (datosOmegas.Board0x21._OH_6_16_SW_4_2_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_16_SW_4_2_DE, _Instrumentos);
+                    }
+                    if (datosOmegas.Board0x21._OH_6_16_SW_4_3_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_6_16_SW_4_3_DE, _Instrumentos);
+                    }
+                    if (datosOmegas.Board0x21._OH_7_3_SW_2_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_7_3_SW_2_DE, _Instrumentos);
+                    }
+                    if (datosOmegas.Board0x21._OH_7_4_SW_3_1_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_7_4_SW_3_1_DE, _Instrumentos);
+                    }
+                    if (datosOmegas.Board0x21._OH_7_4_SW_3_2_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_7_4_SW_3_2_DE, _Instrumentos);
+                    }
 
-                        string inst = mov.Getinstrumento(datosOmegas.Board0x22._OH_8_2_SW_3_1_DE.Nombre);
-                        setDictInstrument(inst);
-                        datosOmegas.Board0x22._OH_8_2_SW_3_1_DE.erase = false;
+                    if (datosOmegas.Board0x21._OH_5_1_SW_3_1_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_5_1_SW_3_1_DE, _Instrumentos);
+                    }
+                    if (datosOmegas.Board0x21._OH_5_1_SW_3_2_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_5_1_SW_3_2_DE, _Instrumentos);
+                    }
+                    if (datosOmegas.Board0x21._OH_5_2_SW_2_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_5_2_SW_2_DE, _Instrumentos);
+                    }
+                    if (datosOmegas.Board0x21._OH_5_3_SW_2_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x21._OH_5_3_SW_2_DE, _Instrumentos);
+                     }
+
+                    if (datosOmegas.Board0x22._OH_8_1_PH_2_DE.CambioVariable)
+                    {
+                        HallarInstrumento(datosOmegas.Board0x22._OH_8_1_PH_2_DE, _Instrumentos);
+                                             
+                    }
+                    if (datosOmegas.Board0x22._OH_8_2_SW_3_1_DE.CambioVariable)
+                    {
+                      
                     }
                     if (datosOmegas.Board0x22._OH_8_2_SW_3_2_DE.erase)
                     {
@@ -3110,6 +2980,11 @@ namespace SESION_PRACTICA.Logica
 
 
 
+        }
+
+        public  ListadoInstrumentos GetListadoDeInstrumentos() {
+
+            return _Instrumentos;        
         }
 
         private void ProcesarOmegas()

@@ -17,7 +17,7 @@ namespace SESION_PRACTICA.Modelos
     {
         private int? _id;
         private string _nombreetiqueta;
-        private int?[] _valores;
+        private string[] _valores;
         private Mod_Instrumento _Instrumento;
         public int? ID
         {
@@ -33,7 +33,7 @@ namespace SESION_PRACTICA.Modelos
 
         }
 
-        public int?[] ValorLabel
+        public string[] ValorLabel
         {
             get { return _valores; }
             set { _valores = value; }
@@ -51,7 +51,7 @@ namespace SESION_PRACTICA.Modelos
 
         public Mod_Etiqueta() { }
 
-        public Mod_Etiqueta(int? Id, string NombreEtiq,int?[] ValorSenal ,Mod_Instrumento Instrument)
+        public Mod_Etiqueta(int? Id, string NombreEtiq,string[] ValorSenal ,Mod_Instrumento Instrument)
         {
             ID = Id;
             Nombre_Etiqueta = NombreEtiq;

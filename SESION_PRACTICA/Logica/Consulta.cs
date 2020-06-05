@@ -130,7 +130,7 @@ namespace SESION_PRACTICA.Logica
         {
             foreach (var item in LabelAgrupados)
             {
-                var ValorEtiquetasAsociadas= item.Select(x => x.Etiquetas).ToArray();
+                var ValorEtiquetasAsociadas= item.Select(x => x.Valor).ToArray();
                 var IdEtiqueta = item.Key;
                 var NombreEtiqueta = Etiquetas.FirstOrDefault(x=>x.Oid.Equals(item.Key)).Nombre;
                 var InstrumentoAsociado = Instrumentos.FirstOrDefault(y=> Etiquetas.FirstOrDefault(x=>x.Oid.Equals(item.Key)).Instrumento.Equals(y.ID));
