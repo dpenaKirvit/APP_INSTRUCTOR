@@ -21,7 +21,8 @@ namespace SESION_PRACTICA.Modelos
         private int _id;
         private string _nombre_instrumento;
         private Mod_Senales[] _senales;
-        private string _etiqueta_Actual;
+        private string _etiqueta_Actual_in;
+        private string _etiqueta_Actual_out;
 
 
 
@@ -46,11 +47,16 @@ namespace SESION_PRACTICA.Modelos
 
         }
 
-        public string Etiqueta_Actual{
-            get { return _etiqueta_Actual; }
-            set { _etiqueta_Actual = value; }
+        public string Etiqueta_Actual_In{
+            get { return _etiqueta_Actual_in; }
+            set { _etiqueta_Actual_in = value; }
         }
-                
+        public string Etiqueta_Actual_Out
+        {
+            get { return _etiqueta_Actual_out; }
+            set { _etiqueta_Actual_out = value; }
+        }
+
 
         public Mod_Instrumento() { }
 

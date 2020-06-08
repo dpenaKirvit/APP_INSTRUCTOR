@@ -57,77 +57,77 @@ namespace SESION_PRACTICA
 
         private void B_Instrumento_OVH1_click(object sender, RoutedEventArgs e)
         {
-            Driver_C130.GetEtiquetaActual(501);
+            Driver_C130.GetEtiquetaActual_In(501);
         }
 
         private void B_Instrumento_OVH2_click(object sender, RoutedEventArgs e)
         {
-            Driver_C130.GetEtiquetaActual(400);
+            Driver_C130.GetEtiquetaActual_In(400);
         }
 
         private void B_Instrumento_OVH3_click(object sender, RoutedEventArgs e)
         {
-            Driver_C130.GetEtiquetaActual(402);
+            Driver_C130.GetEtiquetaActual_In(402);
         }
 
         private void B_Instrumento_OVH4_click(object sender, RoutedEventArgs e)
         {
-            Driver_C130.GetEtiquetaActual(409);
+            Driver_C130.GetEtiquetaActual_In(409);
         }
 
         private void B_Instrumento_frontal1_click(object sender, RoutedEventArgs e)
         {
-            Driver_C130.GetEtiquetaActual(29);
+            Driver_C130.GetEtiquetaActual_In(29);
         }
 
         private void B_Instrumento_frontal2_click(object sender, RoutedEventArgs e)
         {
-            Driver_C130.GetEtiquetaActual(61);
+            Driver_C130.GetEtiquetaActual_In(61);
         }
 
         private void B_Instrumento_frontal3_click(object sender, RoutedEventArgs e)
         {
-            Driver_C130.GetEtiquetaActual(62);
+            Driver_C130.GetEtiquetaActual_In(62);
         }
 
         private void B_Instrumento_frontal4_click(object sender, RoutedEventArgs e)
         {
-            Driver_C130.GetEtiquetaActual(672);
+            Driver_C130.GetEtiquetaActual_In(672);
         }
 
         private void B_Instrumento_Pedestal1_click(object sender, RoutedEventArgs e)
         {
-            Driver_C130.GetEtiquetaActual(334);
+            Driver_C130.GetEtiquetaActual_In(334);
         }
 
         private void B_Instrumento_Pedestal2_click(object sender, RoutedEventArgs e)
         {
-            Driver_C130.GetEtiquetaActual(267);
+            Driver_C130.GetEtiquetaActual_In(267);
         }
 
         private void B_Instrumento_Pedestal3_click(object sender, RoutedEventArgs e)
         {
-            Driver_C130.GetEtiquetaActual(268);
+            Driver_C130.GetEtiquetaActual_In(268);
         }
 
         private void B_Instrumento_Pedestal4_click(object sender, RoutedEventArgs e)
         {
-            Driver_C130.GetEtiquetaActual(269);
+            Driver_C130.GetEtiquetaActual_In(269);
         }
 
         private void B_Instrumento_CB1_click(object sender, RoutedEventArgs e)
         {
-            Driver_C130.GetEtiquetaActual(681);
+            Driver_C130.GetEtiquetaActual_In(681);
         }
 
         private void B_Instrumento_CB2_click(object sender, RoutedEventArgs e)
         {
-            Driver_C130.GetEtiquetaActual(685);
+            Driver_C130.GetEtiquetaActual_In(685);
         }
 
         private void B_Instrumento_CB3_click(object sender, RoutedEventArgs e)
         {
-            Driver_C130.GetEtiquetaActual(686);
+            Driver_C130.GetEtiquetaActual_In(686);
         }
     }
 }

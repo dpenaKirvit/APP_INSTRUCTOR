@@ -97,11 +97,33 @@ namespace SESION_PRACTICA.Logica
             return _Instrumentos;
         }
 
-        public string GetEtiquetaActual(int Id_Instrumento) {
+        public string GetEtiquetaActual_In(int Id_Instrumento) {
             string NombreInstrumento = _Instrumentos.FirstOrDefault(y => y.ID.Equals(Id_Instrumento)).Nombre;
-            string EtiquetaActual = _Instrumentos.FirstOrDefault(x => x.ID.Equals(Id_Instrumento)).Etiqueta_Actual;
-            Console.WriteLine(NombreInstrumento + " Eitqueta: " + EtiquetaActual);
-            return EtiquetaActual;                
+            string EtiquetaActual_In = _Instrumentos.FirstOrDefault(x => x.ID.Equals(Id_Instrumento)).Etiqueta_Actual_In;
+            Console.WriteLine(NombreInstrumento + " Etiqueta: " + EtiquetaActual_In);
+            return EtiquetaActual_In;                
+        }
+
+        public string GetEtiquetaActual_Out(int Id_Instrumento) {
+            string NombreInstrumento = _Instrumentos.FirstOrDefault(y => y.ID.Equals(Id_Instrumento)).Nombre;
+            string EtiquetaActual_Out= _Instrumentos.FirstOrDefault(x => x.ID.Equals(Id_Instrumento)).Etiqueta_Actual_Out;
+            Console.WriteLine(NombreInstrumento + " Etiqueta: " + EtiquetaActual_Out);
+            return EtiquetaActual_Out;
+        }
+
+
+        public void EscribirInstrumentoDigitalSalida() { 
+        
+        
+        }
+
+        public void EscribirInstrumentoAnalogo() { 
+        
+        }
+
+        public void EscribirInstrumentoEids() { 
+        
+        
         }
 
        
@@ -118,26 +140,44 @@ namespace SESION_PRACTICA.Logica
         private string Actualizar_Etiqueta(ListadoEtiquetas ListaEtiquetas, Mod_Instrumento InstrumentoActual) {
 
             var EtiquetasXInstrumento = ListaEtiquetas.Where(x => x.Instrumento.Equals(InstrumentoActual)).ToList();
-            var Nombre_Etiqueta = "";
+            var Nombre_Etiqueta_In = "";
+            var Nombre_Etiqueta_Out = "";
             foreach (var item in EtiquetasXInstrumento)
             {
                 if (item != null)
-                {                    
-                    var ValoresAsociados = item.ValorLabel.Select(x =>( x != "0")).ToArray();
-                    var Valores_Senales = InstrumentoActual.Senales.Where(x => x.Tipo != "1").Select(y => y.Valor).ToArray(); ;
-                  if (ValoresAsociados.SequenceEqual(Valores_Senales))
+                {
+                    var ValoresAsociados_In = item.Id_Senales.Where(x => x.Tipo != "1").Select(x => x.Valor).ToArray();
+                    var ValoresAsociados_Out = item.Id_Senales.Where(x => x.Tipo != "0").Select(x => x.Valor).ToArray();
+
+                    var Valores_Senales_Entrada = InstrumentoActual.Senales.Where(x => x.Tipo != "1").Select(x=>x.Valor).ToArray();
+                    var Valores_Senales_Salida = InstrumentoActual.Senales.Where(f => f.Tipo != "0").Select(x => x.Valor).ToArray();
+
+                    var IdAsociados_In = item.Id_Senales.Where(x => x.Tipo != "1").Select(x => x.IDProtocolo).ToArray();
+                    var IdAsociados_Out = item.Id_Senales.Where(x => x.Tipo != "0").Select(x => x.IDProtocolo).ToArray();
+
+                    var IdSenales_In = InstrumentoActual.Senales.Where(x => x.Tipo != "1").Select(o => o.IDProtocolo).ToArray();
+                    var IdSenales_Out = InstrumentoActual.Senales.Where(x => x.Tipo != "0").Select(o => o.IDProtocolo).ToArray();
+                    var prueba = (IdAsociados_In.SequenceEqual(IdSenales_In));
+
+
+                  if (ValoresAsociados_In.SequenceEqual(Valores_Senales_Entrada) && (IdAsociados_In.SequenceEqual(IdSenales_In)) &&(IdAsociados_In!=null))
                     {
-                        Nombre_Etiqueta = item.Nombre_Etiqueta;
+                        Nombre_Etiqueta_In = item.Nombre_Etiqueta;
+                    }
+                    if (ValoresAsociados_Out.SequenceEqual(Valores_Senales_Salida) && (IdAsociados_Out.SequenceEqual(IdSenales_Out)) && (IdAsociados_Out != null)) {
+                        Nombre_Etiqueta_Out = item.Nombre_Etiqueta;
                     }
                 }
 
             }
-            if (Nombre_Etiqueta != "")
+            if (Nombre_Etiqueta_In != "" || Nombre_Etiqueta_Out!="")
             {
-                InstrumentoActual.Etiqueta_Actual= Nombre_Etiqueta;
-                return Nombre_Etiqueta;
+                InstrumentoActual.Etiqueta_Actual_In= Nombre_Etiqueta_In;
+                InstrumentoActual.Etiqueta_Actual_Out = Nombre_Etiqueta_Out;
+                return Nombre_Etiqueta_In + "  " + Nombre_Etiqueta_Out;
             }
-            InstrumentoActual.Etiqueta_Actual = "NULL";
+            InstrumentoActual.Etiqueta_Actual_In = "NULL";
+            InstrumentoActual.Etiqueta_Actual_Out = "NULL";
             return "No hay etiqueta asociada";
         }
 

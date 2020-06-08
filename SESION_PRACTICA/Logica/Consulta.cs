@@ -136,7 +136,8 @@ namespace SESION_PRACTICA.Logica
                 var IdEtiqueta = item.Key;
                 var NombreEtiqueta = Etiquetas.FirstOrDefault(x=>x.Oid.Equals(item.Key)).Nombre;
                 var InstrumentoAsociado = Instrumentos.FirstOrDefault(y=> Etiquetas.FirstOrDefault(x=>x.Oid.Equals(item.Key)).Instrumento.Equals(y.ID));
-                Mod_Etiqueta _Etiquetas = new Mod_Etiqueta(IdEtiqueta, NombreEtiqueta, ValorEtiquetasAsociadas, InstrumentoAsociado);
+                var senal_asociada = InstrumentoAsociado.Senales;
+                Mod_Etiqueta _Etiquetas = new Mod_Etiqueta(IdEtiqueta, NombreEtiqueta, ValorEtiquetasAsociadas, InstrumentoAsociado, senal_asociada);
                 EtiquetasActuales.Add(_Etiquetas);
             }
                     
