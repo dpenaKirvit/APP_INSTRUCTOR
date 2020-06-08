@@ -28,7 +28,7 @@ namespace SESION_PRACTICA
 		ListadoSenales SenalesActuales;
 		ListadoInstrumentos InstrumentosActuales;
 		ListadoEtiquetas EtiquetasActuales;
-		Dictionary<string, string> dictInstruments;
+		
 
 		public MainWindow()
         {
@@ -51,7 +51,83 @@ namespace SESION_PRACTICA
         {
             Driver_C130 = new DriverElectronica();
 			Driver_C130.DetectarDispositivos();
-            Driver_C130.Iniciar(InstrumentosActuales,EtiquetasActuales,SenalesActuales);
+            Driver_C130.Iniciar(InstrumentosActuales,EtiquetasActuales);
+            Panel_prueba.Visibility = Visibility.Visible;
+        }
+
+        private void B_Instrumento_OVH1_click(object sender, RoutedEventArgs e)
+        {
+            Driver_C130.GetEtiquetaActual(501);
+        }
+
+        private void B_Instrumento_OVH2_click(object sender, RoutedEventArgs e)
+        {
+            Driver_C130.GetEtiquetaActual(400);
+        }
+
+        private void B_Instrumento_OVH3_click(object sender, RoutedEventArgs e)
+        {
+            Driver_C130.GetEtiquetaActual(402);
+        }
+
+        private void B_Instrumento_OVH4_click(object sender, RoutedEventArgs e)
+        {
+            Driver_C130.GetEtiquetaActual(409);
+        }
+
+        private void B_Instrumento_frontal1_click(object sender, RoutedEventArgs e)
+        {
+            Driver_C130.GetEtiquetaActual(29);
+        }
+
+        private void B_Instrumento_frontal2_click(object sender, RoutedEventArgs e)
+        {
+            Driver_C130.GetEtiquetaActual(61);
+        }
+
+        private void B_Instrumento_frontal3_click(object sender, RoutedEventArgs e)
+        {
+            Driver_C130.GetEtiquetaActual(62);
+        }
+
+        private void B_Instrumento_frontal4_click(object sender, RoutedEventArgs e)
+        {
+            Driver_C130.GetEtiquetaActual(672);
+        }
+
+        private void B_Instrumento_Pedestal1_click(object sender, RoutedEventArgs e)
+        {
+            Driver_C130.GetEtiquetaActual(334);
+        }
+
+        private void B_Instrumento_Pedestal2_click(object sender, RoutedEventArgs e)
+        {
+            Driver_C130.GetEtiquetaActual(267);
+        }
+
+        private void B_Instrumento_Pedestal3_click(object sender, RoutedEventArgs e)
+        {
+            Driver_C130.GetEtiquetaActual(268);
+        }
+
+        private void B_Instrumento_Pedestal4_click(object sender, RoutedEventArgs e)
+        {
+            Driver_C130.GetEtiquetaActual(269);
+        }
+
+        private void B_Instrumento_CB1_click(object sender, RoutedEventArgs e)
+        {
+            Driver_C130.GetEtiquetaActual(681);
+        }
+
+        private void B_Instrumento_CB2_click(object sender, RoutedEventArgs e)
+        {
+            Driver_C130.GetEtiquetaActual(685);
+        }
+
+        private void B_Instrumento_CB3_click(object sender, RoutedEventArgs e)
+        {
+            Driver_C130.GetEtiquetaActual(686);
         }
     }
 }

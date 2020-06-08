@@ -11,6 +11,7 @@ namespace SESION_PRACTICA.Modelos
         private string _idprotocolo;
         private string _nombresenal;
         private bool _valor;
+        private string _tipo;
   
 
         public string IDProtocolo
@@ -34,12 +35,17 @@ namespace SESION_PRACTICA.Modelos
 
         }
 
+        public string Tipo{
+            get { return _tipo; }
+            set { _tipo = value; }
+        }
         public Mod_Senales() { }
 
-        public Mod_Senales(string IDPrt, string NombreSen, bool ValorSen) {
+        public Mod_Senales(string IDPrt, string NombreSen, bool ValorSen,string TipoSen) {
             IDProtocolo = IDPrt;
             NombreSenal = NombreSen;
             Valor = ValorSen;
+            Tipo = TipoSen;
         
         }
     }

@@ -49,7 +49,8 @@ namespace SESION_PRACTICA.Logica
             var Lista_LabelSignals = LabelSignalsDB.ToList();
 
             var SenalesAgrupadas = Lista_Senales.GroupBy(g => g.Instrumento).ToList();
-            var LabelAgrupados = Lista_LabelSignals.GroupBy(g => g.Etiquetas).ToList();
+            var LabelOrdenados = Lista_LabelSignals.OrderBy(o => o.SenalElectronica).ToList();
+            var LabelAgrupados = LabelOrdenados.GroupBy(g => g.Etiquetas).ToList();
 
             SenalesActuales = ObtenerSenales(SenalesAgrupadas);
             InstrumentosActuales = ObtenerInstrumentos(SenalesAgrupadas, Lista_Instrumentos, SenalesActuales);
@@ -78,9 +79,10 @@ namespace SESION_PRACTICA.Logica
 
                 var Id_Senales_Asociadas = item.Select(x => x.Id).ToArray(); //Listado Senales Asociadas ID_Electronica
                 var Nombre_SenaleS_Asociadas = item.Select(x => x.Nombre).ToArray();//Listado Nombres Senales Asociadas
+                var Tipo_Senales = item.Select(x => x.Io.ToString()).ToArray();
                 for (int i = 0; i < Id_Senales_Asociadas.Length; i++)
                 {
-                    Mod_Senales Senal = new Mod_Senales(Id_Senales_Asociadas[i], Nombre_SenaleS_Asociadas[i], false);
+                    Mod_Senales Senal = new Mod_Senales(Id_Senales_Asociadas[i], Nombre_SenaleS_Asociadas[i], false, Tipo_Senales[i]);
                     SenalesActuales.Add(Senal);
                 }
             }
