@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,7 +55,7 @@ namespace SESION_PRACTICA.Logica
 
             SenalesActuales = ObtenerSenales(SenalesAgrupadas);
             InstrumentosActuales = ObtenerInstrumentos(SenalesAgrupadas, Lista_Instrumentos, SenalesActuales);
-            EtiquetasActuales = ObtenerEtiquetas(LabelAgrupados, InstrumentosActuales, Lista_Etiquetas);
+            EtiquetasActuales = ObtenerEtiquetas(LabelAgrupados, InstrumentosActuales, Lista_Etiquetas,Lista_Senales);
         }
         public ListadoSenales getListadoSenales()
         {
@@ -128,7 +129,7 @@ namespace SESION_PRACTICA.Logica
 
         }
 
-        private ListadoEtiquetas ObtenerEtiquetas(List<IGrouping<int?, LabelSignalsEtiquetas>> LabelAgrupados, ListadoInstrumentos Instrumentos, List<Etiqueta> Etiquetas)
+        private ListadoEtiquetas ObtenerEtiquetas(List<IGrouping<int?, LabelSignalsEtiquetas>> LabelAgrupados, ListadoInstrumentos Instrumentos, List<Etiqueta> Etiquetas, List<SenalElectronica>Senales)
         {
             foreach (var item in LabelAgrupados)
             {
@@ -136,9 +137,21 @@ namespace SESION_PRACTICA.Logica
                 var IdEtiqueta = item.Key;
                 var NombreEtiqueta = Etiquetas.FirstOrDefault(x=>x.Oid.Equals(item.Key)).Nombre;
                 var InstrumentoAsociado = Instrumentos.FirstOrDefault(y=> Etiquetas.FirstOrDefault(x=>x.Oid.Equals(item.Key)).Instrumento.Equals(y.ID));
-                var senal_asociada = InstrumentoAsociado.Senales;
-                Mod_Etiqueta _Etiquetas = new Mod_Etiqueta(IdEtiqueta, NombreEtiqueta, ValorEtiquetasAsociadas, InstrumentoAsociado, senal_asociada);
+                var senalEtiqueta = item.Select(x => x.SenalElectronica.Value).ToArray();
+                Mod_Senales[] Arr_Mod_Senales = new Mod_Senales[senalEtiqueta.Length];
+
+                for (int i = 0; i < senalEtiqueta.Length; i++) 
+                {
+                    var senalAbuscar = senalEtiqueta[i];
+                    var SenalEtiqueta = Senales.FirstOrDefault(s=>s.Oid.Equals(senalAbuscar));
+                    var Mod_Senales_Instrumento = InstrumentoAsociado.Senales.FirstOrDefault(x => x.IDProtocolo.Equals(SenalEtiqueta.Id));
+                     Arr_Mod_Senales[i] = Mod_Senales_Instrumento;
+                   
+                }
+                Mod_Etiqueta _Etiquetas = new Mod_Etiqueta(IdEtiqueta, NombreEtiqueta, ValorEtiquetasAsociadas, InstrumentoAsociado, Arr_Mod_Senales);
                 EtiquetasActuales.Add(_Etiquetas);
+
+
             }
                     
             

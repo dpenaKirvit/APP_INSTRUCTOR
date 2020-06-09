@@ -39,13 +39,14 @@ namespace SESION_PRACTICA.Logica
         public DriverElectronica()
         {
             datosOmegas = new ProcesoOmegas();
-            
+
         }
 
 
 
 
-        public void Iniciar(ListadoInstrumentos Instrumentos, ListadoEtiquetas Etiquetas) {
+        public void Iniciar(ListadoInstrumentos Instrumentos, ListadoEtiquetas Etiquetas)
+        {
 
             try
             {
@@ -97,47 +98,46 @@ namespace SESION_PRACTICA.Logica
             return _Instrumentos;
         }
 
-        public string GetEtiquetaActual_In(int Id_Instrumento) {
-            string NombreInstrumento = _Instrumentos.FirstOrDefault(y => y.ID.Equals(Id_Instrumento)).Nombre;
-            string EtiquetaActual_In = _Instrumentos.FirstOrDefault(x => x.ID.Equals(Id_Instrumento)).Etiqueta_Actual_In;
-            Console.WriteLine(NombreInstrumento + " Etiqueta: " + EtiquetaActual_In);
-            return EtiquetaActual_In;                
+        public string GetEtiquetaActual_In(string Nombre_Instrumento)
+        {
+            string EtiquetaActual_In = _Instrumentos.FirstOrDefault(x => x.Nombre.Equals(Nombre_Instrumento)).Etiqueta_Actual_In;
+            Console.WriteLine(Nombre_Instrumento + " Etiqueta: " + EtiquetaActual_In);
+            return EtiquetaActual_In;
         }
 
-        public string GetEtiquetaActual_Out(int Id_Instrumento) {
-            string NombreInstrumento = _Instrumentos.FirstOrDefault(y => y.ID.Equals(Id_Instrumento)).Nombre;
-            string EtiquetaActual_Out= _Instrumentos.FirstOrDefault(x => x.ID.Equals(Id_Instrumento)).Etiqueta_Actual_Out;
-            Console.WriteLine(NombreInstrumento + " Etiqueta: " + EtiquetaActual_Out);
+        public string GetEtiquetaActual_Out(string Nombre_Instrumento)
+        {
+            
+            string EtiquetaActual_Out = _Instrumentos.FirstOrDefault(x => x.Nombre.Equals(Nombre_Instrumento)).Etiqueta_Actual_Out;
+            Console.WriteLine(Nombre_Instrumento + " Etiqueta: " + EtiquetaActual_Out);
             return EtiquetaActual_Out;
         }
 
 
-        public void EscribirInstrumentoDigitalSalida() { 
-        
-        
-        }
+        public void EscribirInstrumento(string Nombre_Instrumento, string Etiqueta, float valorInicial, float valorFinal, float tiempoInicio, float duracion, bool oscila)
+        {
+            /* Buscar _Instrumentos el insturmento segun del nombre*/
+            /* Verificar si es analogo o digital*/
+            /* Si es análogo*/
 
-        public void EscribirInstrumentoAnalogo() { 
-        
-        }
 
-        public void EscribirInstrumentoEids() { 
-        
-        
         }
+  
 
-       
-        private void HallarInstrumento (Electronica.Simulacion.VariableDigital<bool> variableDigital, ListadoInstrumentos _instrumentos)
+
+        private void HallarInstrumento(Electronica.Simulacion.VariableDigital<bool> variableDigital, ListadoInstrumentos _instrumentos)
         {
             var CodSenal = variableDigital.Id.ToString();
             var PosInstrumento = _instrumentos.Select(x => x.Senales.FirstOrDefault(z => z.IDProtocolo.Equals(CodSenal))).ToList().FindIndex(x => x != null);
             var Nombre_Instrumento = _instrumentos.Select(x => x.Nombre).ElementAt(PosInstrumento).ToString();
             var Instrumento_Actual = _instrumentos.ElementAt(PosInstrumento);
+
             _Instrumentos.ElementAt(PosInstrumento).Senales.FirstOrDefault(x => x.IDProtocolo == CodSenal).Valor = variableDigital.Valor;
-            var Etiqueta = Actualizar_Etiqueta(_Etiquetas, Instrumento_Actual);           
+            Actualizar_Etiqueta(_Etiquetas, Instrumento_Actual);
         }
 
-        private string Actualizar_Etiqueta(ListadoEtiquetas ListaEtiquetas, Mod_Instrumento InstrumentoActual) {
+        private void Actualizar_Etiqueta(ListadoEtiquetas ListaEtiquetas, Mod_Instrumento InstrumentoActual)
+        {
 
             var EtiquetasXInstrumento = ListaEtiquetas.Where(x => x.Instrumento.Equals(InstrumentoActual)).ToList();
             var Nombre_Etiqueta_In = "";
@@ -146,10 +146,10 @@ namespace SESION_PRACTICA.Logica
             {
                 if (item != null)
                 {
-                    var ValoresAsociados_In = item.Id_Senales.Where(x => x.Tipo != "1").Select(x => x.Valor).ToArray();
-                    var ValoresAsociados_Out = item.Id_Senales.Where(x => x.Tipo != "0").Select(x => x.Valor).ToArray();
+                    var ValoresAsociados = item.ValorLabel.Select(x => x != "0").ToArray();
+                   
 
-                    var Valores_Senales_Entrada = InstrumentoActual.Senales.Where(x => x.Tipo != "1").Select(x=>x.Valor).ToArray();
+                    var Valores_Senales_Entrada = InstrumentoActual.Senales.Where(x => x.Tipo != "1").Select(x => x.Valor).ToArray();
                     var Valores_Senales_Salida = InstrumentoActual.Senales.Where(f => f.Tipo != "0").Select(x => x.Valor).ToArray();
 
                     var IdAsociados_In = item.Id_Senales.Where(x => x.Tipo != "1").Select(x => x.IDProtocolo).ToArray();
@@ -157,31 +157,33 @@ namespace SESION_PRACTICA.Logica
 
                     var IdSenales_In = InstrumentoActual.Senales.Where(x => x.Tipo != "1").Select(o => o.IDProtocolo).ToArray();
                     var IdSenales_Out = InstrumentoActual.Senales.Where(x => x.Tipo != "0").Select(o => o.IDProtocolo).ToArray();
-                    var prueba = (IdAsociados_In.SequenceEqual(IdSenales_In));
 
-
-                  if (ValoresAsociados_In.SequenceEqual(Valores_Senales_Entrada) && (IdAsociados_In.SequenceEqual(IdSenales_In)) &&(IdAsociados_In!=null))
+                    if (ValoresAsociados.SequenceEqual(Valores_Senales_Entrada) && (IdAsociados_In.SequenceEqual(IdSenales_In)) && (IdAsociados_In != null))
                     {
                         Nombre_Etiqueta_In = item.Nombre_Etiqueta;
                     }
-                    if (ValoresAsociados_Out.SequenceEqual(Valores_Senales_Salida) && (IdAsociados_Out.SequenceEqual(IdSenales_Out)) && (IdAsociados_Out != null)) {
+
+                    if ((ValoresAsociados.SequenceEqual(Valores_Senales_Salida)) && (IdAsociados_Out.SequenceEqual(IdSenales_Out)) && (IdAsociados_Out != null))
+                    {
                         Nombre_Etiqueta_Out = item.Nombre_Etiqueta;
                     }
-                }
 
+                }
             }
-            if (Nombre_Etiqueta_In != "" || Nombre_Etiqueta_Out!="")
+            if (Nombre_Etiqueta_In != "" || Nombre_Etiqueta_Out != "")
             {
-                InstrumentoActual.Etiqueta_Actual_In= Nombre_Etiqueta_In;
+                InstrumentoActual.Etiqueta_Actual_In = Nombre_Etiqueta_In;
                 InstrumentoActual.Etiqueta_Actual_Out = Nombre_Etiqueta_Out;
-                return Nombre_Etiqueta_In + "  " + Nombre_Etiqueta_Out;
             }
-            InstrumentoActual.Etiqueta_Actual_In = "NULL";
-            InstrumentoActual.Etiqueta_Actual_Out = "NULL";
-            return "No hay etiqueta asociada";
+            else
+            {
+                InstrumentoActual.Etiqueta_Actual_In = "NULL";
+                InstrumentoActual.Etiqueta_Actual_Out = "NULL";
+            }
         }
 
-        private void ProcesoPrincipal() {
+        private void ProcesoPrincipal()
+        {
 
             #region CodigoOSC
             //IntPtr OscObj = new IntPtr();
@@ -213,7 +215,7 @@ namespace SESION_PRACTICA.Logica
                     if (datosOmegas.Board0x21._OH_1_3_SW_2_DE.erase)
                     {
                         HallarInstrumento(datosOmegas.Board0x21._OH_1_3_SW_2_DE, _Instrumentos);
-                        datosOmegas.Board0x21._OH_1_3_SW_2_DE.erase = false; 
+                        datosOmegas.Board0x21._OH_1_3_SW_2_DE.erase = false;
                     }
                     if (datosOmegas.Board0x21._OH_1_4_SW_2_DE.erase)
                     {
@@ -222,10 +224,10 @@ namespace SESION_PRACTICA.Logica
                     }
                     if (datosOmegas.Board0x21._OH_2_2_SW_3_1_DE.erase)
                     {
-                       
+
                         HallarInstrumento(datosOmegas.Board0x21._OH_2_2_SW_3_1_DE, _Instrumentos);
                         datosOmegas.Board0x21._OH_2_2_SW_3_1_DE.erase = false;
-                      
+
                     }
                     if (datosOmegas.Board0x21._OH_2_2_SW_3_2_DE.erase)
                     {
@@ -415,11 +417,11 @@ namespace SESION_PRACTICA.Logica
                     if (datosOmegas.Board0x22._OH_8_2_SW_3_2_DE.erase)
                     {
                         HallarInstrumento(datosOmegas.Board0x22._OH_8_2_SW_3_2_DE, _Instrumentos);
-                        datosOmegas.Board0x22._OH_8_2_SW_3_2_DE.erase = false; 
+                        datosOmegas.Board0x22._OH_8_2_SW_3_2_DE.erase = false;
                     }
                     if (datosOmegas.Board0x22._OH_8_3_PH_2_DE.erase)
                     {
-                       HallarInstrumento(datosOmegas.Board0x22._OH_8_3_PH_2_DE, _Instrumentos);
+                        HallarInstrumento(datosOmegas.Board0x22._OH_8_3_PH_2_DE, _Instrumentos);
                         datosOmegas.Board0x22._OH_8_3_PH_2_DE.erase = false;
                     }
                     if (datosOmegas.Board0x22._OH_8_4_SW_3_1_DE.erase)
@@ -515,10 +517,10 @@ namespace SESION_PRACTICA.Logica
                     }
                     if (datosOmegas.Board0x22._OH_8_22_SW_2_DE.erase)
                     {
-                                               
+
                         HallarInstrumento(datosOmegas.Board0x22._OH_8_22_SW_2_DE, _Instrumentos);
                         datosOmegas.Board0x22._OH_8_22_SW_2_DE.erase = false;
-                       
+
                     }
                     if (datosOmegas.Board0x22._OH_8_25_SW_3_1_DE.erase)
                     {
@@ -1262,7 +1264,7 @@ namespace SESION_PRACTICA.Logica
                     {
                         HallarInstrumento(datosOmegas.Board0x27._OH_14_2_SW_2_DE, _Instrumentos);
                         datosOmegas.Board0x27._OH_14_2_SW_2_DE.erase = false;
-                      }
+                    }
                     if (datosOmegas.Board0x27._OH_14_3_SW_2_DE.erase)
                     {
                         HallarInstrumento(datosOmegas.Board0x27._OH_14_3_SW_2_DE, _Instrumentos);
@@ -1344,7 +1346,7 @@ namespace SESION_PRACTICA.Logica
                         HallarInstrumento(datosOmegas.Board0x27._OH_17_2_SW_2_DE, _Instrumentos);
                         datosOmegas.Board0x27._OH_17_2_SW_2_DE.erase = false;
                     }
-                   
+
                     #endregion
                     #region Senales_Frontal
 
@@ -1391,7 +1393,7 @@ namespace SESION_PRACTICA.Logica
                         datosOmegas.Board0x2E._CI_2_1_SW_2_DE.erase = false;
                     }
 
-                   
+
                     if (datosOmegas.Board0x2E._CI_3_1_PHK_2_DE.erase)
                     {
                         HallarInstrumento(datosOmegas.Board0x2E._CI_3_1_PHK_2_DE, _Instrumentos);
@@ -1707,9 +1709,9 @@ namespace SESION_PRACTICA.Logica
 
                     if (datosOmegas.Board0x38._PB_1_1_CC_2_DE.erase)
                     {
-
                         HallarInstrumento(datosOmegas.Board0x38._PB_1_1_CC_2_DE, _Instrumentos);
                         datosOmegas.Board0x38._PB_1_1_CC_2_DE.erase = false;
+                        Console.WriteLine(datosOmegas.Board0x38._PB_1_1_CC_2_DE.Nombre);
                     }
                     if (datosOmegas.Board0x38._PB_1_2_CC_2_DE.erase)
                     {
@@ -2008,13 +2010,13 @@ namespace SESION_PRACTICA.Logica
                         HallarInstrumento(datosOmegas.Board0x29._FC_5_3_SW_3_1_DE, _Instrumentos);
                         datosOmegas.Board0x29._FC_5_3_SW_3_1_DE.erase = false;
                     }
-                   
+
                     if (datosOmegas.Board0x29._FC_5_3_SW_3_2_DE.erase)
                     {
                         HallarInstrumento(datosOmegas.Board0x29._FC_5_3_SW_3_2_DE, _Instrumentos);
                         datosOmegas.Board0x29._FC_5_3_SW_3_2_DE.erase = false;
                     }
-                  
+
                     if (datosOmegas.Board0x29._FC_5_4_SW_3_1_DE.erase)
                     {
                         HallarInstrumento(datosOmegas.Board0x29._FC_5_4_SW_3_1_DE, _Instrumentos);
@@ -2121,21 +2123,21 @@ namespace SESION_PRACTICA.Logica
                         datosOmegas.Board0x29._FC_17_1_SW_3_2_DE.erase = false;
                     }
 
-                   
+
 
                     #endregion
                 }
-                catch 
+                catch
                 {
                 }
-                         
-                        
+
+
             }
 
 
         }
 
-        
+
         private void ProcesarOmegas()
         {
             while (procesar)
