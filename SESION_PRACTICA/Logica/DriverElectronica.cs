@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Electronica.Componentes;
 using Microsoft.EntityFrameworkCore.Internal;
+using SESION_PRACTICA.Datos;
 using SESION_PRACTICA.Modelos;
 
 namespace SESION_PRACTICA.Logica
@@ -107,23 +108,598 @@ namespace SESION_PRACTICA.Logica
 
         public string GetEtiquetaActual_Out(string Nombre_Instrumento)
         {
-            
+
             string EtiquetaActual_Out = _Instrumentos.FirstOrDefault(x => x.Nombre.Equals(Nombre_Instrumento)).Etiqueta_Actual_Out;
             Console.WriteLine(Nombre_Instrumento + " Etiqueta: " + EtiquetaActual_Out);
             return EtiquetaActual_Out;
         }
 
 
-        public void EscribirInstrumento(string Nombre_Instrumento, string Etiqueta, float valorInicial, float valorFinal, float tiempoInicio, float duracion, bool oscila)
+        public void EscribirInstrumento(string Nombre_Instrumento, string EtiquetaNueva, float valorInicial, float valorFinal, float tiempoInicio, float duracion, bool oscila)
         {
             /* Buscar _Instrumentos el insturmento segun del nombre*/
-            /* Verificar si es analogo o digital*/
-            /* Si es análogo*/
+            var InstrumentoActual = _Instrumentos.FirstOrDefault(x => x.Nombre.Equals(Nombre_Instrumento));
+            if (InstrumentoActual != null)
+            {
+                /* Verificar si es analogo o digital*/
+                int EsDigital = InstrumentoActual.Tipo != 1 ? 1 : 2;
+                switch (EsDigital)
+                {
+                    /* Si es digital */
+                    case 1:
+                        /*Verificar etiqueta Nueva*/
+                        var ListaEtiquetasXInstrumento = _Etiquetas.Where(X => X.Instrumento.Equals(InstrumentoActual));
+                        var EtiquetaAEscribir = ListaEtiquetasXInstrumento.FirstOrDefault(X => X.Equals(EtiquetaNueva));
+                        /*Buscar señales asociadas y valores asociados*/
+                        var SenalesAsociadas = EtiquetaAEscribir.Id_Senales;
+                        var ValoresAsociados = EtiquetaAEscribir.ValorLabel;
+                        var posicionInstrumento = _Instrumentos.IndexOf(InstrumentoActual);
+                        /*Escribir señales en la electrónica*/
+                        for (int i = 0; i < SenalesAsociadas.Length; i++)
+                        {
+                            string Board = SenalesAsociadas[i].Board;
+                            string Nombre = SenalesAsociadas[i].NombreSenal;
+                            bool ValorAEscribir = ValoresAsociados[i] != "0";
+                            EscribirSenalDigital(Board, Nombre, ValorAEscribir);
+                            /*Actualizar valor de la senal*/
+                            // _Instrumentos.ElementAt(posicionInstrumento).Senales.;
+
+                        }
+                        break;
+                }
+            }
+
+
+
+
+            /*Actualizar Etiqueta*/
 
 
         }
-  
 
+        private void EscribirSenalDigital(string board, string nombre, bool valorAEscribir)
+        {
+            switch (board)
+            {
+                case "33":
+                    switch (nombre)
+                    {
+                        case "OH_2_1_PH_2_M_G_DS":
+                            datosOmegas.Board0x21.OH_2_1_PH_2_M_G_DS = valorAEscribir;
+                            break;
+                        case "OH_2_3_PH_2_M_G_DS":
+                            datosOmegas.Board0x21.OH_2_3_PH_2_M_G_DS = valorAEscribir;
+                            break;
+                        case "OH_2_4_PH_2_M_G_DS":
+                            datosOmegas.Board0x21.OH_2_3_PH_2_M_G_DS = valorAEscribir;
+                            break;
+                        case "OH_2_5_PH_2_M_G_DS":
+                            datosOmegas.Board0x21.OH_2_3_PH_2_M_G_DS = valorAEscribir;
+                            break;
+                        case "OH_7_5_PH_2_DS":
+                            datosOmegas.Board0x21.OH_7_5_PH_2_DS = valorAEscribir;
+                            break;
+                        case "OH_7_6_PH_2_DS":
+                            datosOmegas.Board0x21.OH_7_6_PH_2_DS = valorAEscribir;
+                            break;
+                        case "OH_7_7_PH_2_DS":
+                            datosOmegas.Board0x21.OH_7_7_PH_2_DS = valorAEscribir;
+                            break;
+                    }
+                    break;
+                case "34":
+                    switch (nombre)
+                    {
+                        case "OH_8_12_PH_2_DS":
+                            datosOmegas.Board0x22.OH_8_12_PH_2_DS = valorAEscribir;
+                            break;
+                        case "OH_8_36_PH_2_DS":
+                            datosOmegas.Board0x22.OH_8_36_PH_2_DS = valorAEscribir;
+                            break;
+                        case "OH_8_37_PH_2_DS":
+                            datosOmegas.Board0x22.OH_8_37_PH_2_DS = valorAEscribir;
+                            break;
+                        case "OH_8_38_PH_2_DS":
+                            datosOmegas.Board0x22.OH_8_38_PH_2_DS = valorAEscribir;
+                            break;
+                        case "OH_8_40_PH_2_DS":
+                            datosOmegas.Board0x22.OH_8_40_PH_2_DS = valorAEscribir;
+                            break;
+                        case "OH_8_41_PH_2_DS":
+                            datosOmegas.Board0x22.OH_8_41_PH_2_DS = valorAEscribir;
+                            break;
+                        case "OH_8_42_PH_2_DS":
+                            datosOmegas.Board0x22.OH_8_42_PH_2_DS = valorAEscribir;
+                            break;
+                    }
+                    break;
+                case "35":
+                    break;
+                case "36":
+                    switch (nombre)
+                    {
+                        case "OH_10_7_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_7_PHK_2_DS = valorAEscribir; 
+                            break;
+                        case "OH_10_8_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_8_PHK_2_DS = valorAEscribir; 
+                            break; 
+                        case "OH_10_9_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_9_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_10_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_10_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_11_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_11_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_12_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_12_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_13_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_13_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_14_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_14_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_15_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_15_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_16_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_16_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_17_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_17_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_18_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_18_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_19_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_19_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_20_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_20_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_21_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_21_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_22_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_22_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_23_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_23_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_24_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_24_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_25_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_24_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_26_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_26_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_48_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_48_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_52_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_52_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_10_58_PHK_2_DS":
+                            datosOmegas.Board0x24.OH_10_58_PHK_2_DS = valorAEscribir;
+                             break;
+                    }
+                    break;
+                case "37":
+                    break;
+                case "38":
+                    switch (nombre)
+                    {
+                        case "OH_11_5_PHK_2_DS":
+                            datosOmegas.Board0x26.OH_11_5_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_11_11_PHK_2_DS":
+                            datosOmegas.Board0x26.OH_11_11_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_11_19_PHK_2_DS":
+                            datosOmegas.Board0x26.OH_11_19_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_11_27_PHK_2_DS":
+                            datosOmegas.Board0x26.OH_11_27_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_11_30_PHK_2_DS":
+                            datosOmegas.Board0x26.OH_11_30_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_11_34_PHK_2_DS":
+                            datosOmegas.Board0x26.OH_11_30_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_11_42_PHK_2_DS":
+                            datosOmegas.Board0x26.OH_11_42_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_11_52_PHK_2_DS":
+                            datosOmegas.Board0x26.OH_11_52_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_11_58_PHK_2_DS":
+                            datosOmegas.Board0x26.OH_11_58_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_12_4_PL_2_R_DS":
+                            datosOmegas.Board0x26.OH_12_4_PL_2_R_DS = valorAEscribir;
+                            break;
+                        case "OH_12_5_PL_2_R_DS":
+                            datosOmegas.Board0x26.OH_12_5_PL_2_R_DS = valorAEscribir;
+                            break;
+                        case "OH_12_7_PL_2_R_DS":
+                            datosOmegas.Board0x26.OH_12_7_PL_2_R_DS = valorAEscribir;
+                            break;
+                        case "OH_12_9_PL_2_R_DS":
+                            datosOmegas.Board0x26.OH_12_9_PL_2_R_DS = valorAEscribir;
+                            break;
+                        case "OH_12_8_PL_2_R_DS":
+                            datosOmegas.Board0x26.OH_12_8_PL_2_R_DS = valorAEscribir;
+                            break;
+                        case "OH_12_4_PL_2_F_DS":
+                            datosOmegas.Board0x26.OH_12_4_PL_2_F_DS = valorAEscribir;
+                            break;
+                        case "OH_12_5_PL_2_F_DS":
+                            datosOmegas.Board0x26.OH_12_5_PL_2_F_DS = valorAEscribir;
+                            break;
+                        case "OH_12_7_PL_2_F_DS":
+                            datosOmegas.Board0x26.OH_12_7_PL_2_F_DS = valorAEscribir;
+                            break;
+                        case "OH_12_8_PL_2_F_DS":
+                            datosOmegas.Board0x26.OH_12_7_PL_2_F_DS = valorAEscribir;
+                            break;
+                    }
+                    break;
+                case "39":
+                    switch (nombre) 
+                    {
+                        case "OH_14_7_PHK_2_DS":
+                            datosOmegas.Board0x27.OH_14_7_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_14_8_PHK_2_DS":
+                            datosOmegas.Board0x27.OH_14_8_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_14_9_PHK_2_DS":
+                            datosOmegas.Board0x27.OH_14_9_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_14_10_PHK_2_DS":
+                            datosOmegas.Board0x27.OH_14_10_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_14_11_PHK_2_DS":
+                            datosOmegas.Board0x27.OH_14_11_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_14_12_PHK_2_DS":
+                            datosOmegas.Board0x27.OH_14_12_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_15_1_PH_2_DS":
+                            datosOmegas.Board0x27.OH_15_1_PH_2_DS = valorAEscribir;
+                            break;
+                        case "OH_15_4_PH_2_DS":
+                            datosOmegas.Board0x27.OH_15_4_PH_2_DS = valorAEscribir;
+                            break;
+                        case "OH_16_1_PHK_2_DS":
+                            datosOmegas.Board0x27.OH_16_1_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_16_2_PHK_2_DS":
+                            datosOmegas.Board0x27.OH_16_2_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_16_3_PHK_2_DS":
+                            datosOmegas.Board0x27.OH_16_3_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_16_4_PHK_2_DS":
+                            datosOmegas.Board0x27.OH_16_4_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_16_5_PHK_2_DS":
+                            datosOmegas.Board0x27.OH_16_5_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_16_6_PHK_2_DS":
+                            datosOmegas.Board0x27.OH_16_6_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_16_7_PHK_2_DS":
+                            datosOmegas.Board0x27.OH_16_7_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "OH_16_8_PHK_2_DS":
+                            datosOmegas.Board0x27.OH_16_8_PHK_2_DS = valorAEscribir;
+                            break;
+                    }
+                    break;
+                case "40":
+                    switch (nombre)
+                    {
+                        case "FC_2_6_PHK_2_DS":
+                            datosOmegas.Board0x28.FC_2_6_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "FC_2_6_PHK_2_2_DS":
+                            datosOmegas.Board0x28.FC_2_6_PHK_2_2_DS = valorAEscribir;
+                            break;
+                    }
+                    break;
+                case "41":
+                    switch (nombre) {
+                        case "FC_7_2_PHK_2_DS":
+                            datosOmegas.Board0x29.FC_7_2_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "FC_9_23_PHK_2_DS":
+                            datosOmegas.Board0x29.FC_9_23_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "FC_12_1_PHK_2_DS":
+                            datosOmegas.Board0x29.FC_12_1_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "FC_12_2_PHK_2_DS":
+                            datosOmegas.Board0x29.FC_12_2_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "FC_12_3_PHK_2_DS":
+                            datosOmegas.Board0x29.FC_12_3_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "FC_12_4_PHK_2_DS":
+                            datosOmegas.Board0x29.FC_12_4_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "FC_13_23_PHK_2_DS":
+                            datosOmegas.Board0x29.FC_13_23_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "FC_6_1_PHPL_2_DS":
+                            datosOmegas.Board0x29.FC_6_1_PHPL_2_DS = valorAEscribir;
+                            break;
+                        case "FC_6_2_PHPL_2_DS":
+                            datosOmegas.Board0x29.FC_6_2_PHPL_2_DS = valorAEscribir;
+                            break;
+                        case "FC_6_3_PHPL_2_DS":
+                            datosOmegas.Board0x29.FC_6_3_PHPL_2_DS = valorAEscribir;
+                            break;
+                        case "FC_6_4_PHPL_2_DS":
+                            datosOmegas.Board0x29.FC_6_4_PHPL_2_DS = valorAEscribir;
+                            break;
+                    }
+                    break;
+                case "46":
+                    switch (nombre) {
+                        case "PI_3_1_PHK_2_DS":
+                            datosOmegas.Board0x2E.PI_3_1_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "PI_3_2_PHK_2_DS":
+                            datosOmegas.Board0x2E.PI_3_2_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "PI_5_1_LK_DS":
+                            datosOmegas.Board0x2E.PI_5_1_LK_DS = valorAEscribir;
+                            break;
+                        case "PI_5_2_LK_DS":
+                            datosOmegas.Board0x2E.PI_5_2_LK_DS = valorAEscribir;
+                            break;
+                        case "EI_3_1_PHK_2_DS":
+                            datosOmegas.Board0x2E.EI_3_1_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "EI_3_2_PHK_2_DS":
+                            datosOmegas.Board0x2E.EI_3_2_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "CI_2_2_LK_DS":
+                            datosOmegas.Board0x2E.CI_2_2_LK_DS = valorAEscribir;
+                            break;
+                        case "CI_2_3_LK_DS":
+                            datosOmegas.Board0x2E.CI_2_3_LK_DS = valorAEscribir;
+                            break;
+                        case "CI_2_4_LK_DS":
+                            datosOmegas.Board0x2E.CI_2_4_LK_DS = valorAEscribir;
+                            break;
+                        case "CI_2_5_LK_DS":
+                            datosOmegas.Board0x2E.CI_2_5_LK_DS = valorAEscribir;
+                            break;
+                        case "CI_3_1_PHK_2_DS":
+                            datosOmegas.Board0x2E.CI_3_1_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "CI_3_2_PHK_2_DS":
+                            datosOmegas.Board0x2E.CI_3_2_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "CI_8_2_LK_DS":
+                            datosOmegas.Board0x2E.CI_8_2_LK_DS = valorAEscribir;
+                            break;
+                        case "CI_9_4_PHK_2_DS":
+                            datosOmegas.Board0x2E.CI_9_4_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "CI_9_5_PHK_2_DS":
+                            datosOmegas.Board0x2E.CI_9_5_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "CI_9_6_PHK_2_DS":
+                            datosOmegas.Board0x2E.CI_9_6_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "CI_9_7_PHK_2_DS":
+                            datosOmegas.Board0x2E.CI_9_7_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "CI_9_8_PHK_2_DS":
+                            datosOmegas.Board0x2E.CI_9_8_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "CI_9_14_PHK_2_DS":
+                            datosOmegas.Board0x2E.CI_9_14_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "CI_9_15_PHK_2_DS":
+                            datosOmegas.Board0x2E.CI_9_15_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "CI_11_1_IN_1_DS":
+                            datosOmegas.Board0x2E.CI_11_1_IN_1_DS = valorAEscribir;
+                            break;
+                        case "CI_11_1_IN_2_DS":
+                            datosOmegas.Board0x2E.CI_11_1_IN_2_DS = valorAEscribir;
+                            break;
+                        case "CI_11_1_IN_3_DS":
+                            datosOmegas.Board0x2E.CI_11_1_IN_3_DS = valorAEscribir;
+                            break;
+                        case "CI_11_2_IN_1_DS":
+                            datosOmegas.Board0x2E.CI_11_2_IN_1_DS = valorAEscribir;
+                            break;
+                        case "CI_11_2_IN_2_DS":
+                            datosOmegas.Board0x2E.CI_11_2_IN_2_DS = valorAEscribir;
+                            break;
+                        case "CI_11_2_IN_3_DS":
+                            datosOmegas.Board0x2E.CI_11_2_IN_3_DS = valorAEscribir;
+                            break;
+                        case "CI_11_3_IN_1_DS":
+                            datosOmegas.Board0x2E.CI_11_3_IN_1_DS = valorAEscribir;
+                            break;
+                        case "CI_11_3_IN_2_DS":
+                            datosOmegas.Board0x2E.CI_11_3_IN_2_DS = valorAEscribir;
+                            break;
+                        case "CI_11_3_IN_3_DS":
+                            datosOmegas.Board0x2E.CI_11_3_IN_3_DS = valorAEscribir;
+                            break;
+                        case "PI_6_1_PHK_2_DS":
+                            datosOmegas.Board0x2E.PI_6_1_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "PI_6_2_PHK_2_DS":
+                            datosOmegas.Board0x2E.PI_6_2_PHK_2_DS = valorAEscribir;
+                            break;
+                          }
+                    break;
+                case "47":
+                    switch (nombre) {
+
+                        case "PS_3_3_PH_2_DS":
+                            datosOmegas.Board0x2F.PS_3_3_PH_2_DS = valorAEscribir;
+                            break;
+                        case "PS_3_4_PH_2_DS":
+                            datosOmegas.Board0x2F.PS_3_4_PH_2_DS = valorAEscribir;
+                            break;
+                        case "PS_3_6_PH_2_DS":
+                            datosOmegas.Board0x2F.PS_3_6_PH_2_DS = valorAEscribir;
+                            break;
+                    }
+                    break;
+                case "48":
+                    switch (nombre)
+                    {
+                        case "CS_4_1_PHK_2_DS":
+                            datosOmegas.Board0x30.CS_4_1_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "CS_4_2_PHK_2_DS":
+                            datosOmegas.Board0x30.CS_4_2_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "CS_4_3_PHK_2_DS":
+                            datosOmegas.Board0x30.CS_4_3_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "CS_4_4_PHK_2_DS":
+                            datosOmegas.Board0x30.CS_4_4_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "CS_4_5_PH_2_DS":
+                            datosOmegas.Board0x30.CS_4_5_PH_2_DS = valorAEscribir;
+                            break;
+                        case "CS_4_6_PH_2_DS":
+                            datosOmegas.Board0x30.CS_4_6_PH_2_DS = valorAEscribir;
+                            break;
+                        case "CS_4_7_PH_2_DS":
+                            datosOmegas.Board0x30.CS_4_7_PH_2_DS = valorAEscribir;
+                            break;
+                        case "CS_4_8_PH_2_DS":
+                            datosOmegas.Board0x30.CS_4_8_PH_2_DS = valorAEscribir;
+                            break;
+                        case "CS_4_10_PHPL_2_LZ_DS":
+                            datosOmegas.Board0x30.CS_4_10_PHPL_2_LZ_DS = valorAEscribir;
+                            break;
+                        case "CS_4_10_PHPL_2_BB_DS":
+                            datosOmegas.Board0x30.CS_4_10_PHPL_2_BB_DS = valorAEscribir;
+                            break;
+                        case "CS_4_11_PHPL_2_LZ_DS":
+                            datosOmegas.Board0x30.CS_4_11_PHPL_2_LZ_DS = valorAEscribir;
+                            break;
+                        case "CS_4_11_PHPL_2_BB_DS":
+                            datosOmegas.Board0x30.CS_4_11_PHPL_2_BB_DS = valorAEscribir;
+                            break;
+                        case "CS_4_12_PHPL_2_LZ_DS":
+                            datosOmegas.Board0x30.CS_4_12_PHPL_2_LZ_DS = valorAEscribir;
+                            break;
+                        case "CS_4_12_PHPL_2_BB_DS":
+                            datosOmegas.Board0x30.CS_4_12_PHPL_2_BB_DS = valorAEscribir;
+                            break;
+                        case "CS_4_13_PHPL_2_LZ_DS":
+                            datosOmegas.Board0x30.CS_4_13_PHPL_2_LZ_DS = valorAEscribir;
+                            break;
+                        case "CS_4_13_PHPL_2_BB_DS":
+                            datosOmegas.Board0x30.CS_4_13_PHPL_2_BB_DS = valorAEscribir;
+                            break;
+                        case "CE_3_2_PHK_2_DS":
+                            datosOmegas.Board0x30.CE_3_2_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "CE_3_3_PHK_2_DS":
+                            datosOmegas.Board0x30.CE_3_3_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "CE_3_4_PHK_2_DS":
+                            datosOmegas.Board0x30.CE_3_4_PHK_2_DS = valorAEscribir;
+                            break;
+                        case "CS_3_5_PH_2_DS":
+                            datosOmegas.Board0x30.CS_3_5_PH_2_DS = valorAEscribir;
+                            break;
+                        case "CS_3_6_PH_2_DS":
+                            datosOmegas.Board0x30.CS_3_6_PH_2_DS = valorAEscribir;
+                            break;
+                        case "CS_3_3_PH_2_DS":
+                            datosOmegas.Board0x30.CS_3_3_PH_2_DS = valorAEscribir;
+                            break;
+                    }
+                    break;
+                case "56":
+                    switch (nombre) {
+                        case "PB_1_1_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_1_CC_2_DS = valorAEscribir;
+                            break;
+                        case "PB_1_2_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_2_CC_2_DS = valorAEscribir;
+                            break;
+                        case "PB_1_3_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_3_CC_2_DS = valorAEscribir;
+                            break;
+                        case "PB_1_4_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_4_CC_2_DS = valorAEscribir;
+                            break;
+                        case "PB_1_5_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_5_CC_2_DS = valorAEscribir;
+                            break;
+                        case "PB_1_6_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_6_CC_2_DS = valorAEscribir;
+                            break;
+                        case "PB_1_7_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_7_CC_2_DS = valorAEscribir;
+                            break;
+                        case "PB_1_8_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_8_CC_2_DS = valorAEscribir;
+                            break;
+                        case "PB_1_9_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_9_CC_2_DS = valorAEscribir;
+                            break;
+                        case "PB_1_10_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_10_CC_2_DS = valorAEscribir;
+                            break;
+                        case "PB_1_11_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_11_CC_2_DS = valorAEscribir;
+                            break;
+                        case "PB_1_12_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_12_CC_2_DS = valorAEscribir;
+                            break;
+                        case "PB_1_13_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_13_CC_2_DS = valorAEscribir;
+                            break;
+                        case "PB_1_14_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_14_CC_2_DS = valorAEscribir;
+                            break;
+                        case "PB_1_15_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_15_CC_2_DS = valorAEscribir;
+                            break;
+                        case "PB_1_16_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_16_CC_2_DS = valorAEscribir;
+                            break;
+                        case "PB_1_17_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_17_CC_2_DS = valorAEscribir;
+                            break;
+                        case "PB_1_18_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_18_CC_2_DS = valorAEscribir;
+                            break;
+                        case "PB_1_19_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_19_CC_2_DS = valorAEscribir;
+                            break;
+                        case "PB_1_20_CC_2_DS":
+                            datosOmegas.Board0x38.PB_1_20_CC_2_DS = valorAEscribir;
+                            break;
+                    }
+                    break;
+            }
+
+        }
 
         private void HallarInstrumento(Electronica.Simulacion.VariableDigital<bool> variableDigital, ListadoInstrumentos _instrumentos)
         {
@@ -147,7 +723,7 @@ namespace SESION_PRACTICA.Logica
                 if (item != null)
                 {
                     var ValoresAsociados = item.ValorLabel.Select(x => x != "0").ToArray();
-                   
+
 
                     var Valores_Senales_Entrada = InstrumentoActual.Senales.Where(x => x.Tipo != "1").Select(x => x.Valor).ToArray();
                     var Valores_Senales_Salida = InstrumentoActual.Senales.Where(f => f.Tipo != "0").Select(x => x.Valor).ToArray();
@@ -1717,6 +2293,7 @@ namespace SESION_PRACTICA.Logica
                     {
                         HallarInstrumento(datosOmegas.Board0x38._PB_1_2_CC_2_DE, _Instrumentos);
                         datosOmegas.Board0x38._PB_1_2_CC_2_DE.erase = false;
+
                     }
                     if (datosOmegas.Board0x38._PB_1_3_CC_2_DE.erase)
                     {

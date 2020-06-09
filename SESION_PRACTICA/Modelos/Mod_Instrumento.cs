@@ -21,6 +21,7 @@ namespace SESION_PRACTICA.Modelos
         private int _id;
         private string _nombre_instrumento;
         private Mod_Senales[] _senales;
+        private int _tipo;
         private string _etiqueta_Actual_in;
         private string _etiqueta_Actual_out;
 
@@ -30,6 +31,13 @@ namespace SESION_PRACTICA.Modelos
         {
             get { return _id; }
             set { _id = value; }
+
+        }
+
+        public int Tipo
+        {
+            get { return _tipo; }
+            set { _tipo = value; }
 
         }
 
@@ -60,11 +68,12 @@ namespace SESION_PRACTICA.Modelos
 
         public Mod_Instrumento() { }
 
-        public Mod_Instrumento(int Id, string NombreIns, Mod_Senales[] Senales_Ele)
+        public Mod_Instrumento(int Id, string NombreIns, Mod_Senales[] Senales_Ele, int TipoDoA)
         {
             ID = Id;
             Nombre = NombreIns;
             Senales = Senales_Ele;
+            Tipo = TipoDoA;
 
         }
 

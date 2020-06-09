@@ -81,9 +81,10 @@ namespace SESION_PRACTICA.Logica
                 var Id_Senales_Asociadas = item.Select(x => x.Id).ToArray(); //Listado Senales Asociadas ID_Electronica
                 var Nombre_SenaleS_Asociadas = item.Select(x => x.Nombre).ToArray();//Listado Nombres Senales Asociadas
                 var Tipo_Senales = item.Select(x => x.Io.ToString()).ToArray();
+                var Board_Elec = item.Select(x => x.Board.ToString()).ToArray();
                 for (int i = 0; i < Id_Senales_Asociadas.Length; i++)
                 {
-                    Mod_Senales Senal = new Mod_Senales(Id_Senales_Asociadas[i], Nombre_SenaleS_Asociadas[i], false, Tipo_Senales[i]);
+                    Mod_Senales Senal = new Mod_Senales(Id_Senales_Asociadas[i], Nombre_SenaleS_Asociadas[i], false, Tipo_Senales[i], Board_Elec[i]);
                     SenalesActuales.Add(Senal);
                 }
             }
@@ -102,6 +103,7 @@ namespace SESION_PRACTICA.Logica
 
                     var NombreInstrumento = item.NombreInstrumento;
                     var IdInstrumento = item.Oid;
+                    var Tipo_Instrumento = item.TipoSeñal.Value;
                     Mod_Senales[] Senales = new Mod_Senales[SenalesXInstrumento.Length];
                     for (int i = 0; i < SenalesXInstrumento.Length; i++)
                     {
@@ -112,14 +114,15 @@ namespace SESION_PRACTICA.Logica
                             Senales[i] = SenalesActuales.FirstOrDefault(o => o.IDProtocolo.Equals(SenalesXInstrumento[i]));
                         }
                     }
-                    Mod_Instrumento InstrumentoDummy = new Mod_Instrumento(IdInstrumento, NombreInstrumento, Senales);
+                    Mod_Instrumento InstrumentoDummy = new Mod_Instrumento(IdInstrumento, NombreInstrumento, Senales,Tipo_Instrumento);
                     InstrumentosActuales.Add(InstrumentoDummy);
                 }
                 else {
                     var NombreInstrumento = item.NombreInstrumento;
                     var IdInstrumento = item.Oid;
+                    var Tipo_Instrumento = item.TipoSeñal.Value;
                     Mod_Senales[] Senales = new Mod_Senales[0];
-                    Mod_Instrumento InstrumentoDummy = new Mod_Instrumento(IdInstrumento, NombreInstrumento, Senales);
+                    Mod_Instrumento InstrumentoDummy = new Mod_Instrumento(IdInstrumento, NombreInstrumento, Senales, Tipo_Instrumento);
                     InstrumentosActuales.Add(InstrumentoDummy);
 
                 }
@@ -136,7 +139,7 @@ namespace SESION_PRACTICA.Logica
                 var ValorEtiquetasAsociadas= item.Select(x => x.Valor).ToArray();
                 var IdEtiqueta = item.Key;
                 var NombreEtiqueta = Etiquetas.FirstOrDefault(x=>x.Oid.Equals(item.Key)).Nombre;
-                var InstrumentoAsociado = Instrumentos.FirstOrDefault(y=> Etiquetas.FirstOrDefault(x=>x.Oid.Equals(item.Key)).Instrumento.Equals(y.ID));
+                var InstrumentoAsociado = Instrumentos.FirstOrDefault(y=>y.ID.Equals(Etiquetas.FirstOrDefault(x => x.Oid.Equals(item.Key)).Instrumento));
                 var senalEtiqueta = item.Select(x => x.SenalElectronica.Value).ToArray();
                 Mod_Senales[] Arr_Mod_Senales = new Mod_Senales[senalEtiqueta.Length];
 

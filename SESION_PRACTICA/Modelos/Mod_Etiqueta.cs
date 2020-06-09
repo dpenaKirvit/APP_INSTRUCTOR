@@ -19,7 +19,6 @@ namespace SESION_PRACTICA.Modelos
         private string _nombreetiqueta;
         private string[] _valores;
         private Mod_Senales[] _id_senales;
-
         private Mod_Instrumento _Instrumento;
         public int? ID
         {
