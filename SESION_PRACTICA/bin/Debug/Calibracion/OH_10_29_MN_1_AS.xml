@@ -7,12 +7,12 @@
   </Calibracion>
   <Calibracion>
     <Punto>2</Punto>
-    <Entrada>500</Entrada>
-    <Salida>500</Salida>
+    <Entrada>20</Entrada>
+    <Salida>1800</Salida>
   </Calibracion>
   <Calibracion>
     <Punto>3</Punto>
-    <Entrada>1000</Entrada>
-    <Salida>1000</Salida>
+    <Entrada>60.5</Entrada>
+    <Salida>2750</Salida>
   </Calibracion>
 </EsquemaCalibracion>

@@ -363,6 +363,7 @@
   <ItemGroup>
     <Compile Include="Modelos\Mod_Etiqueta.cs" />
     <Compile Include="Modelos\Mod_Instrumento.cs" />
+    <Compile Include="Modelos\Mod_Reaccion.cs" />
     <Compile Include="Modelos\Mod_Senales.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

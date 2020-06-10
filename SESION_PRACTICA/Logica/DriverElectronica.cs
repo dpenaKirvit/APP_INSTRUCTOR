@@ -30,6 +30,15 @@ namespace SESION_PRACTICA.Logica
         private bool procesar;
         private ListadoInstrumentos _Instrumentos;
         private ListadoEtiquetas _Etiquetas;
+        private Queue<Mod_Reaccion> _Reacciones;
+        private bool EscribirSenales;
+        private Mod_Reaccion Reaccion_Nueva;
+        private List<string> BoardOscilantes;
+        private List<string> SenalesOscilantes;
+
+
+
+
         System.Diagnostics.Stopwatch timer;
 
         public bool EstaOmegas
@@ -54,7 +63,10 @@ namespace SESION_PRACTICA.Logica
                 _Instrumentos = Instrumentos;
                 _Etiquetas = Etiquetas;
                 procesar = false;
+                _Reacciones = new Queue<Mod_Reaccion> { };
                 timer = new System.Diagnostics.Stopwatch();
+                BoardOscilantes = new List<string> { };
+                SenalesOscilantes = new List<string> { };
                 if (datosOmegas.EstaConectado)
                 {
 
@@ -117,45 +129,10 @@ namespace SESION_PRACTICA.Logica
 
         public void EscribirInstrumento(string Nombre_Instrumento, string EtiquetaNueva, float valorInicial, float valorFinal, float tiempoInicio, float duracion, bool oscila)
         {
-            /* Buscar _Instrumentos el insturmento segun del nombre*/
-            var InstrumentoActual = _Instrumentos.FirstOrDefault(x => x.Nombre.Equals(Nombre_Instrumento));
-            if (InstrumentoActual != null)
-            {
-                /* Verificar si es analogo o digital*/
-                int EsDigital = InstrumentoActual.Tipo != 1 ? 1 : 2;
-                switch (EsDigital)
-                {
-                    /* Si es digital */
-                    case 1:
-                        /*Verificar etiqueta Nueva*/
-                        var ListaEtiquetasXInstrumento = _Etiquetas.Where(X => X.Instrumento.Equals(InstrumentoActual));
-                        var EtiquetaAEscribir = ListaEtiquetasXInstrumento.FirstOrDefault(X => X.Equals(EtiquetaNueva));
-                        /*Buscar señales asociadas y valores asociados*/
-                        var SenalesAsociadas = EtiquetaAEscribir.Id_Senales;
-                        var ValoresAsociados = EtiquetaAEscribir.ValorLabel;
-                        var posicionInstrumento = _Instrumentos.IndexOf(InstrumentoActual);
-                        /*Escribir señales en la electrónica*/
-                        for (int i = 0; i < SenalesAsociadas.Length; i++)
-                        {
-                            string Board = SenalesAsociadas[i].Board;
-                            string Nombre = SenalesAsociadas[i].NombreSenal;
-                            bool ValorAEscribir = ValoresAsociados[i] != "0";
-                            EscribirSenalDigital(Board, Nombre, ValorAEscribir);
-                            /*Actualizar valor de la senal*/
-                            // _Instrumentos.ElementAt(posicionInstrumento).Senales.;
-
-                        }
-                        break;
-                }
-            }
-
-
-
-
-            /*Actualizar Etiqueta*/
-
+            _Reacciones.Enqueue(new Mod_Reaccion(Nombre_Instrumento, EtiquetaNueva, tiempoInicio, duracion, valorInicial, valorFinal, oscila));
 
         }
+
 
         private void EscribirSenalDigital(string board, string nombre, bool valorAEscribir)
         {
@@ -219,11 +196,11 @@ namespace SESION_PRACTICA.Logica
                     switch (nombre)
                     {
                         case "OH_10_7_PHK_2_DS":
-                            datosOmegas.Board0x24.OH_10_7_PHK_2_DS = valorAEscribir; 
+                            datosOmegas.Board0x24.OH_10_7_PHK_2_DS = valorAEscribir;
                             break;
                         case "OH_10_8_PHK_2_DS":
-                            datosOmegas.Board0x24.OH_10_8_PHK_2_DS = valorAEscribir; 
-                            break; 
+                            datosOmegas.Board0x24.OH_10_8_PHK_2_DS = valorAEscribir;
+                            break;
                         case "OH_10_9_PHK_2_DS":
                             datosOmegas.Board0x24.OH_10_9_PHK_2_DS = valorAEscribir;
                             break;
@@ -286,7 +263,7 @@ namespace SESION_PRACTICA.Logica
                             break;
                         case "OH_10_58_PHK_2_DS":
                             datosOmegas.Board0x24.OH_10_58_PHK_2_DS = valorAEscribir;
-                             break;
+                            break;
                     }
                     break;
                 case "37":
@@ -351,7 +328,7 @@ namespace SESION_PRACTICA.Logica
                     }
                     break;
                 case "39":
-                    switch (nombre) 
+                    switch (nombre)
                     {
                         case "OH_14_7_PHK_2_DS":
                             datosOmegas.Board0x27.OH_14_7_PHK_2_DS = valorAEscribir;
@@ -415,7 +392,8 @@ namespace SESION_PRACTICA.Logica
                     }
                     break;
                 case "41":
-                    switch (nombre) {
+                    switch (nombre)
+                    {
                         case "FC_7_2_PHK_2_DS":
                             datosOmegas.Board0x29.FC_7_2_PHK_2_DS = valorAEscribir;
                             break;
@@ -452,7 +430,8 @@ namespace SESION_PRACTICA.Logica
                     }
                     break;
                 case "46":
-                    switch (nombre) {
+                    switch (nombre)
+                    {
                         case "PI_3_1_PHK_2_DS":
                             datosOmegas.Board0x2E.PI_3_1_PHK_2_DS = valorAEscribir;
                             break;
@@ -546,10 +525,11 @@ namespace SESION_PRACTICA.Logica
                         case "PI_6_2_PHK_2_DS":
                             datosOmegas.Board0x2E.PI_6_2_PHK_2_DS = valorAEscribir;
                             break;
-                          }
+                    }
                     break;
                 case "47":
-                    switch (nombre) {
+                    switch (nombre)
+                    {
 
                         case "PS_3_3_PH_2_DS":
                             datosOmegas.Board0x2F.PS_3_3_PH_2_DS = valorAEscribir;
@@ -634,7 +614,8 @@ namespace SESION_PRACTICA.Logica
                     }
                     break;
                 case "56":
-                    switch (nombre) {
+                    switch (nombre)
+                    {
                         case "PB_1_1_CC_2_DS":
                             datosOmegas.Board0x38.PB_1_1_CC_2_DS = valorAEscribir;
                             break;
@@ -701,6 +682,161 @@ namespace SESION_PRACTICA.Logica
 
         }
 
+        private void EscribirSenalAnaloga(string board, string nombre, double valorAEscribir)
+        {
+            switch (board)
+            {
+                case "33":
+                    switch (nombre)
+                    {
+                        case "OH_6_2_MN_1_AS":
+                            datosOmegas.Board0x21.OH_6_2_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_6_8_MN_1_AS":
+                            datosOmegas.Board0x21.OH_6_8_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_6_9_MN_1_AS":
+                            datosOmegas.Board0x21.OH_6_9_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_8_10_MN_1_AS":
+                            datosOmegas.Board0x21.OH_8_10_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_8_23_MN_1_AS":
+                            datosOmegas.Board0x21.OH_8_23_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_8_24_MN_1_AS":
+                            datosOmegas.Board0x21.OH_8_24_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_8_29_MN_1_AS":
+                            datosOmegas.Board0x21.OH_8_29_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_8_30_MN_1_AS":
+                            datosOmegas.Board0x21.OH_8_30_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_8_31_MN_1_AS":
+                            datosOmegas.Board0x21.OH_8_31_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_8_33_MN_1_AS":
+                            datosOmegas.Board0x21.OH_8_33_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_8_34_MN_1_AS":
+                            datosOmegas.Board0x21.OH_8_34_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_8_35_MN_1_AS":
+                            datosOmegas.Board0x21.OH_8_35_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_5_5_MN_1_AS":
+                            datosOmegas.Board0x21.OH_5_5_MN_1_AS = valorAEscribir;
+                            break;
+                    }
+                    break;
+                case "35":
+                    switch (nombre)
+                    {
+                        case "OH_10_29_MN_1_AS":
+                            datosOmegas.Board0x23.OH_10_29_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_10_32_MN_1_AS":
+                            datosOmegas.Board0x23.OH_10_32_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_10_35_MN_1_AS":
+                            datosOmegas.Board0x23.OH_10_35_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_10_38_MN_1_AS":
+                            datosOmegas.Board0x23.OH_10_38_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_10_40_MN_1_AS":
+                            datosOmegas.Board0x23.OH_10_40_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_10_42_MN_1_AS":
+                            datosOmegas.Board0x23.OH_10_42_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_10_43_MN_1_AS":
+                            datosOmegas.Board0x23.OH_10_43_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_10_47_MN_1_AS":
+                            datosOmegas.Board0x23.OH_10_47_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_10_54_MN_1_AS":
+                            datosOmegas.Board0x23.OH_10_54_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_10_55_MN_1_AS":
+                            datosOmegas.Board0x23.OH_10_55_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_10_56_MN_1_AS":
+                            datosOmegas.Board0x23.OH_10_56_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_10_57_MN_1_AS":
+                            datosOmegas.Board0x23.OH_10_57_MN_1_AS = valorAEscribir;
+                            break;
+                    }
+                    break;
+                case "37":
+                    switch (nombre)
+                    {
+                        case "OH_11_3_MN_1_AS":
+                            datosOmegas.Board0x25.OH_11_3_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_11_9_MN_1_AS":
+                            datosOmegas.Board0x25.OH_11_9_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_11_15_MN_1_AS":
+                            datosOmegas.Board0x25.OH_11_15_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_11_22_MN_1_AS":
+                            datosOmegas.Board0x25.OH_11_22_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_11_29_MN_1_AS":
+                            datosOmegas.Board0x25.OH_11_29_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_11_31_MN_1_AS":
+                            datosOmegas.Board0x25.OH_11_31_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_11_36_MN_1_AS":
+                            datosOmegas.Board0x25.OH_11_36_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_11_44_MN_1_AS":
+                            datosOmegas.Board0x25.OH_11_44_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_11_49_MN_1_AS":
+                            datosOmegas.Board0x25.OH_11_49_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_11_55_MN_1_AS":
+                            datosOmegas.Board0x25.OH_11_55_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_17_1_Brujula_86_AS":
+                            datosOmegas.Board0x25.OH_17_1_Brujula_86_AS = valorAEscribir;
+                            break;
+                    }
+                    break;
+                case "46":
+                    switch (nombre)
+                    {
+                        case "CI_8_1_MN_1_AS":
+                            datosOmegas.Board0x2E.CI_8_1_MN_1_AS = valorAEscribir;
+                            break;
+                        case "PS_1_5_MN_1_AS":
+                            datosOmegas.Board0x2E.PS_1_5_MN_1_AS = valorAEscribir;
+                            break;
+                        case "CS_1_5_MN_1_AS":
+                            datosOmegas.Board0x2E.CS_1_5_MN_1_AS = valorAEscribir;
+                            break;
+                        case "PI_8_1_MN_1_AS":
+                            datosOmegas.Board0x2E.PI_8_1_MN_1_AS = valorAEscribir;
+                            break;
+                        case "EI_5_1_MN_1_AS":
+                            datosOmegas.Board0x2E.EI_5_1_MN_1_AS = valorAEscribir;
+                            break;
+                        case "OH_9_1_MN_1_AS":
+                            datosOmegas.Board0x2E.OH_9_1_MN_1_AS = valorAEscribir;
+                            break;
+                    }
+                    break;
+            }
+
+
+        }
+
         private void HallarInstrumento(Electronica.Simulacion.VariableDigital<bool> variableDigital, ListadoInstrumentos _instrumentos)
         {
             var CodSenal = variableDigital.Id.ToString();
@@ -757,7 +893,12 @@ namespace SESION_PRACTICA.Logica
                 InstrumentoActual.Etiqueta_Actual_Out = "NULL";
             }
         }
+        private async Task DelayMethod(int delaytime)
+        {
+            Task delay = Task.Delay(delaytime);
+            await delay;
 
+        }
         private void ProcesoPrincipal()
         {
 
@@ -775,6 +916,120 @@ namespace SESION_PRACTICA.Logica
             {
                 try
                 {
+                    if (_Reacciones.Any())
+                    {
+                        var grupoTiempoInicio = _Reacciones.GroupBy(x => x.Tiempo_Inicio).OrderBy(x => x.Key).ToList();
+                        var ListaDeDelays = grupoTiempoInicio.Select(x => x.Key).ToArray();
+                        int TiempoDeEsperaReal = 0;
+                        foreach (var grupoReacciones in grupoTiempoInicio)
+                        {
+                            var indexGrupoReacciones = grupoTiempoInicio.IndexOf((grupoReacciones));
+                            if (indexGrupoReacciones == 0)
+                            {
+                                TiempoDeEsperaReal = (int)grupoReacciones.Key * 1000;
+                            }
+                            else
+                            {
+                                TiempoDeEsperaReal = (int)((grupoReacciones.Key * 1000) - ListaDeDelays[indexGrupoReacciones - 1] * 1000);
+                            }
+                            
+                            Task delay = DelayMethod(TiempoDeEsperaReal);
+                            delay.Wait();                           
+                            
+                            foreach (Mod_Reaccion Reaccion_Nueva in grupoReacciones)
+                            {
+
+                                /* Buscar _Instrumentos el insturmento segun del nombre*/
+                                var InstrumentoActual = _Instrumentos.FirstOrDefault(x => x.Nombre.Equals(Reaccion_Nueva.Nombre_Instrumento));
+                                if (InstrumentoActual != null)
+                                {
+                                    /* Verificar si es analogo o digital*/
+                                    int EsDigital = InstrumentoActual.Tipo != 0 ? 1 : 2;
+                                    switch (EsDigital)
+                                    {
+                                        /* Si es digital */
+                                        case 1:
+                                            /*Verificar etiqueta Nueva*/
+                                            var ListaEtiquetasXInstrumento = _Etiquetas.Where(X => X.Instrumento.Equals(InstrumentoActual));
+                                            var EtiquetaAEscribir = ListaEtiquetasXInstrumento.FirstOrDefault(X => X.Nombre_Etiqueta.Equals(Reaccion_Nueva.Etiqueta_Nueva));
+                                            /*Buscar señales asociadas y valores asociados*/
+                                            var SenalesAsociadas = EtiquetaAEscribir.Id_Senales;
+                                            var ValoresAsociados = EtiquetaAEscribir.ValorLabel;
+                                            var posicionInstrumento = _Instrumentos.IndexOf(InstrumentoActual);
+                                            /*Escribir señales en la electrónica*/
+                                            /*Si oscila*/
+                                            if (!Reaccion_Nueva.Oscila)
+                                            {
+                                                for (int i = 0; i < SenalesAsociadas.Length; i++)
+                                                {
+                                                    string Board = SenalesAsociadas[i].Board;
+                                                    string Nombre = SenalesAsociadas[i].NombreSenal;
+                                                    bool ValorAEscribir = ValoresAsociados[i] != "0";
+                                                    EscribirSenalDigital(Board, Nombre, ValorAEscribir);
+                                                    if (SenalesOscilantes.Contains(Nombre))
+                                                    {
+                                                        BoardOscilantes.RemoveAt(SenalesOscilantes.IndexOf(Nombre));
+                                                        SenalesOscilantes.RemoveAt(SenalesOscilantes.IndexOf(Nombre));
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                for (int i = 0; i < SenalesAsociadas.Length; i++)
+                                                {
+                                                    BoardOscilantes.Add(SenalesAsociadas[i].Board);
+                                                    SenalesOscilantes.Add(SenalesAsociadas[i].NombreSenal);
+                                                }
+                                            }
+                                            break;
+                                        case 2:
+                                            var SenalAsociada = InstrumentoActual.Senales;
+                                            if (!Reaccion_Nueva.Oscila)
+                                            {
+                                                for (int i = 0; i < SenalAsociada.Length; i++)
+                                                {
+                                                    string Board = SenalAsociada[i].Board;
+                                                    string NombreSenal = SenalAsociada[i].NombreSenal;
+                                                    double valor_InicialAEscribir = Reaccion_Nueva.Valor_Inicial;
+                                                    double valor_FinalAEscribir = Reaccion_Nueva.Valor_Final;
+                                                    EscribirSenalAnaloga(Board, NombreSenal, valor_InicialAEscribir);
+                                                    Task delayMotor = DelayMethod(5000);
+                                                    delayMotor.Wait();
+                                                    EscribirSenalAnaloga(Board, NombreSenal, valor_FinalAEscribir);
+                                                }
+
+                                            }
+                                            else {
+                                               
+                                            }
+                                            break;
+                                    }
+                                }
+
+                            }
+
+                        }
+                        _Reacciones.Clear()
+
+                        //Verificar el tiempo de reacción agrupar el queue por tiempo de reacción
+
+                       ;
+                    }
+                    foreach (string item in BoardOscilantes)
+                    {
+                        EscribirSenalDigital(item, SenalesOscilantes.ElementAt(BoardOscilantes.IndexOf(item)), true);
+                        timer.Start();
+                        Task delayOsc = DelayMethod(100);
+                        delayOsc.Wait();
+                        EscribirSenalDigital(item, SenalesOscilantes.ElementAt(BoardOscilantes.IndexOf(item)), false);
+                        Task delayOsc2 = DelayMethod(100);
+                        delayOsc2.Wait();
+                       
+                    }
+
+                    
+
+
                     #region Senales_Overhead
 
                     if (datosOmegas.Board0x21._OH_1_1_SW_2_DE.erase)
