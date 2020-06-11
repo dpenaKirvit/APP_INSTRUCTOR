@@ -114,7 +114,7 @@ namespace SESION_PRACTICA.Logica
                             Senales[i] = SenalesActuales.FirstOrDefault(o => o.IDProtocolo.Equals(SenalesXInstrumento[i]));
                         }
                     }
-                    Mod_Instrumento InstrumentoDummy = new Mod_Instrumento(IdInstrumento, NombreInstrumento, Senales,Tipo_Instrumento);
+                    Mod_Instrumento InstrumentoDummy = new Mod_Instrumento(IdInstrumento, NombreInstrumento, Senales,Tipo_Instrumento,"0");
                     InstrumentosActuales.Add(InstrumentoDummy);
                 }
                 else {
@@ -122,7 +122,7 @@ namespace SESION_PRACTICA.Logica
                     var IdInstrumento = item.Oid;
                     var Tipo_Instrumento = item.TipoSeñal.Value;
                     Mod_Senales[] Senales = new Mod_Senales[0];
-                    Mod_Instrumento InstrumentoDummy = new Mod_Instrumento(IdInstrumento, NombreInstrumento, Senales, Tipo_Instrumento);
+                    Mod_Instrumento InstrumentoDummy = new Mod_Instrumento(IdInstrumento, NombreInstrumento, Senales, Tipo_Instrumento,"0");
                     InstrumentosActuales.Add(InstrumentoDummy);
 
                 }

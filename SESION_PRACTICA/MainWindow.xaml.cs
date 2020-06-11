@@ -33,16 +33,12 @@ namespace SESION_PRACTICA
 
 		public MainWindow()
         {
-			Stopwatch timer = new Stopwatch();
 			ConsultaInicial = new Consulta();
 			SenalesActuales = ConsultaInicial.getListadoSenales(); //Listado de todos los instrumentos
-			Console.WriteLine("Consulta 1");
 			InstrumentosActuales = ConsultaInicial.getInstrumentos();//Listado de todas las etiquetas
-			Console.WriteLine("Consulta 2");
 			EtiquetasActuales = ConsultaInicial.getEtiquetas();
-			Console.WriteLine("Consulta 3");
-			
-			InitializeComponent();
+            Console.WriteLine("Consulta realizada");
+            InitializeComponent();
 			
 		}
 
@@ -51,13 +47,21 @@ namespace SESION_PRACTICA
             Driver_C130 = new DriverElectronica();
 			Driver_C130.DetectarDispositivos();
             Driver_C130.Iniciar(InstrumentosActuales,EtiquetasActuales);
-            Panel_prueba.Visibility = Visibility.Visible;
+            if (Driver_C130.EstaOmegas)
+            {
+                Panel_prueba.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                MessageBox.Show("La electrónica no se encuentra");
+                this.Close();
+            }
         }
 
         private void B_Instrumento_OVH1_click(object sender, RoutedEventArgs e)
         {
             Driver_C130.GetEtiquetaActual_In("OH_1_1_SW_2_SM_SC_1");
-            Console.WriteLine("OH_1_1_SW_2_SM_SC_1");
+            Console.WriteLine("OH_1_1_SW_2_SM_SC_1");            
         }
 
         private void B_Instrumento_OVH2_click(object sender, RoutedEventArgs e)
@@ -83,6 +87,7 @@ namespace SESION_PRACTICA
         {
             Driver_C130.GetEtiquetaActual_In("CI_3_1_PHK_2_M_A_24");
             Driver_C130.GetEtiquetaActual_Out("CI_3_1_PHK_2_M_A_24");
+            Driver_C130.GetEtiquetaActual_Out("EI_3_1_PHK_2_M_A_25");
             Console.WriteLine("CI_3_1_PHK_2_M_A_24");
         }
 
@@ -90,8 +95,9 @@ namespace SESION_PRACTICA
         {
             Driver_C130.GetEtiquetaActual_In("EI_3_1_PHK_2_M_A_25");
             Driver_C130.GetEtiquetaActual_Out("EI_3_1_PHK_2_M_A_25");
-            Driver_C130.EscribirInstrumento("EI_3_1_PHK_2_M_A_25", "ON", 0, 0, 0, 0, false);
-//Driver_C130.EscribirInstrumento("CS_4_1_PHK_2_M_A_25", "ON", 0, 0, 0, 0, true);
+            Driver_C130.NuevaReaccion("EI_3_1_PHK_2_M_A_25", "ON", 0, 0, 0, 0, false);
+           
+            //Driver_C130.EscribirInstrumento("CS_4_1_PHK_2_M_A_25", "ON", 0, 0, 0, 0, true);
             Console.WriteLine("EI_3_1_PHK_2_M_A_25");
         }
 
@@ -100,11 +106,8 @@ namespace SESION_PRACTICA
             Driver_C130.GetEtiquetaActual_In("CS_4_1_PHK_2_M_A_25");
             Driver_C130.GetEtiquetaActual_Out("CS_4_1_PHK_2_M_A_25");
             Console.WriteLine("CS_4_1_PHK_2_M_A_25");
-            Driver_C130.EscribirInstrumento("EI_3_1_PHK_2_M_A_25", "ON", 0, 0, 10, 0, false);
-            Driver_C130.EscribirInstrumento("CS_4_1_PHK_2_M_A_25", "ON", 0, 0, 0, 0, false);
-            Driver_C130.EscribirInstrumento("CS_4_8_PH_2_M_G_19", "ON", 0, 0, 10, 0, false);
-            Driver_C130.EscribirInstrumento("CS_4_8_PH_2_M_G_19", "ON", 0, 0, 25, 0, false);
-            Driver_C130.EscribirInstrumento("OH_10_29_MN_1_79", "", 100, (float)51.3, 15, 0, false);
+            Driver_C130.NuevaReaccion("EI_3_1_PHK_2_M_A_25", "ON", 0, 0, 10, 0, true);
+            Driver_C130.NuevaReaccion("OH_10_29_MN_1_79", "", 100, (float)51.3, 15, 0, true);
         }
 
         private void B_Instrumento_frontal4_click(object sender, RoutedEventArgs e)
@@ -118,6 +121,7 @@ namespace SESION_PRACTICA
         {
             Driver_C130.GetEtiquetaActual_In("FC_2_6_PHK_2_M_G_25");
             Driver_C130.GetEtiquetaActual_Out("FC_2_6_PHK_2_M_G_25");
+            Driver_C130.GetValorInstrumentoAnalogo("OH_6gh_17_PT_1_15");
             Console.WriteLine("FC_2_6_PHK_2_M_G_25");
         }
 

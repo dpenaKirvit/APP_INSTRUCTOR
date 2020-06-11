@@ -117,9 +117,9 @@ namespace Electronica.Componentes
             _OH_5_2_SW_2_DE = new VariableDigital<bool>() { Id = 36, Nombre = "OH_5_2_SW_2_DE" }; variablesLectura.Add(_OH_5_2_SW_2_DE);
             _OH_5_3_SW_2_DE = new VariableDigital<bool>() { Id = 37, Nombre = "OH_5_3_SW_2_DE" }; variablesLectura.Add(_OH_5_3_SW_2_DE);
 
-            _OH_6_1_PT_1_AE = new VariableAnaloga(@"Calibracion\OH_8_25_SW_3_2_AE.xml", 1) { Id = 4000, Nombre = "OH_6_1_PT_1_AE" }; variablesLectura.Add(_OH_6_1_PT_1_AE);
-            _OH_6_11_PT_1_AE = new VariableAnaloga(@"Calibracion\OH_8_26_SW_3_1_AE.xml", 1) { Id = 4001, Nombre = "OH_6_11_PT_1_AE" }; variablesLectura.Add(_OH_6_11_PT_1_AE);
-            _OH_6_17_PT_1_AE = new VariableAnaloga(@"Calibracion\OH_8_26_SW_3_2_AE.xml", 1) { Id = 4002, Nombre = "OH_6_17_PT_1_AE" }; variablesLectura.Add(_OH_6_17_PT_1_AE);
+            _OH_6_1_PT_1_AE = new VariableAnaloga(@"Calibracion\OH_6_1_PT_1_AE.xml", 1) { Id = 4000, Nombre = "OH_6_1_PT_1_AE" }; variablesLectura.Add(_OH_6_1_PT_1_AE);
+            _OH_6_11_PT_1_AE = new VariableAnaloga(@"Calibracion\OH_6_11_PT_1_AE.xml", 1) { Id = 4001, Nombre = "OH_6_11_PT_1_AE" }; variablesLectura.Add(_OH_6_11_PT_1_AE);
+            _OH_6_17_PT_1_AE = new VariableAnaloga(@"Calibracion\OH_6_17_PT_1_AE.xml", 1) { Id = 4002, Nombre = "OH_6_17_PT_1_AE" }; variablesLectura.Add(_OH_6_17_PT_1_AE);
 
             _OH_6_3_PT_1_ENC = new VariableEncoder() { Id = 3500, Nombre = "OH_6_3_PT_1_ENC" }; variablesLectura.Add(_OH_6_3_PT_1_ENC);
         }
