@@ -106,8 +106,9 @@ namespace SESION_PRACTICA
             Driver_C130.GetEtiquetaActual_In("CS_4_1_PHK_2_M_A_25");
             Driver_C130.GetEtiquetaActual_Out("CS_4_1_PHK_2_M_A_25");
             Console.WriteLine("CS_4_1_PHK_2_M_A_25");
-            Driver_C130.NuevaReaccion("EI_3_1_PHK_2_M_A_25", "ON", 0, 0, 10, 0, true);
-            Driver_C130.NuevaReaccion("OH_10_29_MN_1_79", "", 100, (float)51.3, 15, 0, true);
+            Driver_C130.NuevaReaccion("EI_3_1_PHK_2_M_A_25", "ON", 0, 0, 2, 0, false);
+            Driver_C130.NuevaReaccion("OH_10_29_MN_1_79", "", 100, (float)51.3, 3, 0, true);
+            Driver_C130.NuevaReaccion("OH_10_43_MN_1_81", "", 100, (float)20, 0, 0, true);
         }
 
         private void B_Instrumento_frontal4_click(object sender, RoutedEventArgs e)

@@ -971,9 +971,6 @@ namespace SESION_PRACTICA.Logica
             //byte[] DataReceive = new byte[10];
             //GCHandle handle = GCHandle.Alloc(OscObj, GCHandleType.Pinned);
             //GCHandle handle2 = GCHandle.Alloc(DataReceive, GCHandleType.Pinned);
-
-            //List<Actions> actionlist = instructorRef.getActions();
-            //LabelSignals labsignal = null;
             //OscObj = CreateOsc("192.168.0.62", 8282, 7878);
             #endregion
             while (procesar)
@@ -1034,8 +1031,10 @@ namespace SESION_PRACTICA.Logica
                                                     _Instrumentos.FirstOrDefault(x => x.Nombre.Equals(Reaccion_Nueva.Nombre_Instrumento)).Etiqueta_Actual_Out = Reaccion_Nueva.Etiqueta_Nueva;
                                                     if (SenalesOscilantes.Contains(Nombre))
                                                     {
+                                                        Valor_FinalOscilar.RemoveAt(SenalesOscilantes.IndexOf(Nombre));
                                                         BoardOscilantes.RemoveAt(SenalesOscilantes.IndexOf(Nombre));
                                                         SenalesOscilantes.RemoveAt(SenalesOscilantes.IndexOf(Nombre));
+                                                       
                                                     }
                                                 }
                                             }
@@ -1065,8 +1064,10 @@ namespace SESION_PRACTICA.Logica
                                                     EscribirSenal(Board, NombreSenal, false, valor_FinalAEscribir);
                                                     if (SenalesOscilantes.Contains(NombreSenal))
                                                     {
+                                                        Valor_FinalOscilar.RemoveAt(SenalesOscilantes.IndexOf(NombreSenal));
                                                         BoardOscilantes.RemoveAt(SenalesOscilantes.IndexOf(NombreSenal));
                                                         SenalesOscilantes.RemoveAt(SenalesOscilantes.IndexOf(NombreSenal));
+                                                        
                                                     }
 
                                                 }
@@ -1095,28 +1096,33 @@ namespace SESION_PRACTICA.Logica
 
                        ;
                     }
-                    foreach (string item in BoardOscilantes)
+                   for (int i=0;i<BoardOscilantes.Capacity;i++)
                     {
-                        if (SenalesOscilantes.ElementAt(BoardOscilantes.IndexOf(item)).Contains("_AS"))
+                        if (SenalesOscilantes.ElementAt(i).Contains("_AS"))
                         {
-                            var Valor_Oscilar = (Valor_FinalOscilar.ElementAt(BoardOscilantes.IndexOf(item))) + (Valor_FinalOscilar.ElementAt(BoardOscilantes.IndexOf(item))) * 0.5;
-                            EscribirSenal(item, SenalesOscilantes.ElementAt(BoardOscilantes.IndexOf(item)), true, Valor_Oscilar);
-                            Console.WriteLine("Senal Escrita " + Valor_Oscilar.ToString() + " " + SenalesOscilantes.ElementAt(BoardOscilantes.IndexOf(item)));
-                            Task delayMotor1 = DelayMethod(1000);
+                            var Valor_Oscilar = (Valor_FinalOscilar.ElementAt(i)) + (Valor_FinalOscilar.ElementAt(i)) * 0.5;
+                            EscribirSenal(BoardOscilantes.ElementAt(i), SenalesOscilantes.ElementAt(i), true, Valor_Oscilar);
+                            Console.WriteLine("Senal Escrita " + Valor_Oscilar.ToString() + " " + SenalesOscilantes.ElementAt(i));
+                            timer.Start();
+                            Task delayMotor1 = DelayMethod(2000);
                             delayMotor1.Wait();
-                            Valor_Oscilar = (Valor_FinalOscilar.ElementAt(BoardOscilantes.IndexOf(item))) - (Valor_FinalOscilar.ElementAt(BoardOscilantes.IndexOf(item))) * 0.5;
-                            EscribirSenal(item, SenalesOscilantes.ElementAt(BoardOscilantes.IndexOf(item)), true, Valor_Oscilar);
-                            Console.WriteLine("Senal Escrita " + Valor_Oscilar.ToString() + " " + SenalesOscilantes.ElementAt(BoardOscilantes.IndexOf(item)));
+                            timer.Stop();
+                            Console.WriteLine(timer.ElapsedMilliseconds.ToString());
+                            timer.Reset();
+                            Valor_Oscilar = (Valor_FinalOscilar.ElementAt(i)) - (Valor_FinalOscilar.ElementAt(i)) * 0.5;
+                            EscribirSenal(BoardOscilantes.ElementAt(i), SenalesOscilantes.ElementAt(i), true, Valor_Oscilar);
+                            Console.WriteLine("Senal Escrita " + Valor_Oscilar.ToString() + " " + SenalesOscilantes.ElementAt(i));
+                           
                         }
                         else
                         {
 
-                            EscribirSenal(item, SenalesOscilantes.ElementAt(BoardOscilantes.IndexOf(item)), true, 0);
-                            Console.WriteLine("Senal Escrita " + true.ToString() + " " + SenalesOscilantes.ElementAt(BoardOscilantes.IndexOf(item)));
+                            EscribirSenal(BoardOscilantes.ElementAt(i), SenalesOscilantes.ElementAt(i), true, 0);
+                            Console.WriteLine("Senal Escrita " + true.ToString() + " " + SenalesOscilantes.ElementAt(i));
                             Task delayOsc = DelayMethod(100);
                             delayOsc.Wait();
-                            EscribirSenal(item, SenalesOscilantes.ElementAt(BoardOscilantes.IndexOf(item)), false, 0);
-                            Console.WriteLine("Senal Escrita " + false.ToString() + " " + SenalesOscilantes.ElementAt(BoardOscilantes.IndexOf(item)));
+                            EscribirSenal(BoardOscilantes.ElementAt(i), SenalesOscilantes.ElementAt(i), false, 0);
+                            Console.WriteLine("Senal Escrita " + false.ToString() + " " + SenalesOscilantes.ElementAt(i));
                             Task delayOsc2 = DelayMethod(100);
                             delayOsc2.Wait();
 

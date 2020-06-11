@@ -3,9 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:SESION_PRACTICA.Logica"
         xmlns:local="clr-namespace:SESION_PRACTICA"
         mc:Ignorable="d"
         Title="MainWindow" Height="768" Width="1280" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>
