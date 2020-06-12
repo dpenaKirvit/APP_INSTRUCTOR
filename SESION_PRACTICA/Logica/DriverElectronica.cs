@@ -838,7 +838,7 @@ namespace SESION_PRACTICA.Logica
                     break;
                     //  EIDS
                     //case "80":
-                    //    switch (nombre)
+                    //      switch (nombre)
                     //    { 
                     //    }
                     //    break;
