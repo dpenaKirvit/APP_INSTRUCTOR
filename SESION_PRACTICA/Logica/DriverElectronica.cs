@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using ComunicacionServidorEIDS;
 using Electronica.Componentes;
 using Electronica.Simulacion;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -28,6 +30,8 @@ namespace SESION_PRACTICA.Logica
         private ProcesoOmegas datosOmegas;
         private Thread procesoPrincipal;
         private Thread procesoOmegas;
+        private ServidorSocket ComunicacionEids;
+        private Socket _socketEids;
         private bool procesar;
         private ListadoInstrumentos _Instrumentos;
         private ListadoEtiquetas _Etiquetas;
@@ -74,6 +78,7 @@ namespace SESION_PRACTICA.Logica
                     datosOmegas.Abrir();
                     procesoOmegas = new Thread(new ThreadStart(ProcesarOmegas));
                     procesar = true;
+                    conectarSocket();
                     procesoOmegas.Start();
                     Console.WriteLine("Iniciar procesamiento Epsilon");
                 }
@@ -96,10 +101,17 @@ namespace SESION_PRACTICA.Logica
             }
         }
 
+        private void conectarSocket()
+        {
+            ComunicacionEids = new ServidorSocket();
+            _socketEids = ComunicacionEids.SocketServidor.Accept();
+        }
+
         public void Cerrar()
         {
             procesar = false;
             datosOmegas.Cerrar();
+            _socketEids.Close();
         }
         public void DetectarDispositivos()
         {
@@ -117,6 +129,7 @@ namespace SESION_PRACTICA.Logica
         {
             if (_Instrumentos.Any(x => x.Nombre == Nombre_Instrumento))
             {
+
                 string EtiquetaActual_In = _Instrumentos.FirstOrDefault(x => x.Nombre.Equals(Nombre_Instrumento)).Etiqueta_Actual_In;
                 Console.WriteLine(Nombre_Instrumento + " Etiqueta In: " + EtiquetaActual_In);
                 return EtiquetaActual_In;
@@ -144,7 +157,7 @@ namespace SESION_PRACTICA.Logica
                 return ValorActualAn;
             }
             return "NULL";
-            
+
         }
 
         public void NuevaReaccion(string Nombre_Instrumento, string EtiquetaNueva, float valorInicial, float valorFinal, float tiempoInicio, float duracion, bool oscila)
@@ -152,8 +165,8 @@ namespace SESION_PRACTICA.Logica
             if (_Instrumentos.Any(x => x.Nombre == Nombre_Instrumento))
             {
                 _Reacciones.Enqueue(new Mod_Reaccion(Nombre_Instrumento, EtiquetaNueva, tiempoInicio, duracion, valorInicial, valorFinal, oscila));
-            }         
-            
+            }
+
         }
 
 
@@ -836,12 +849,24 @@ namespace SESION_PRACTICA.Logica
                             break;
                     }
                     break;
-                    //  EIDS
-                    //case "80":
-                    //      switch (nombre)
-                    //    { 
-                    //    }
-                    //    break;
+                case "80":
+                    switch (nombre)
+                    {
+                        case "EI_1_10_MN_1_AS":
+                            _socketEids.Send(Encoding.ASCII.GetBytes(nombre + ";"+valorAEscribirAn.ToString()));
+                        break;
+                        case "EI_1_1_MN_1_AS":
+                           _socketEids.Send(Encoding.ASCII.GetBytes(nombre + ";" + valorAEscribirAn.ToString()));
+                            break;
+                        case "OH_7_1_MN_2_AS":
+                            _socketEids.Send(Encoding.ASCII.GetBytes(nombre + ";" + valorAEscribirAn.ToString()));
+                            break;
+                        case "OH_7_2_MN_1_AS":
+                            _socketEids.Send(Encoding.ASCII.GetBytes(nombre + ";" + valorAEscribirAn.ToString()));
+                            break;
+                    }
+                    break;
+            
             }
         }
 
@@ -951,6 +976,7 @@ namespace SESION_PRACTICA.Logica
                         case "FC_11_1_L_55_AE":
                             return datosOmegas.Board0x29._FC_11_1_L_55_AE.Valor.ToString();
 
+
                     }
                     break;
             }
@@ -1034,7 +1060,7 @@ namespace SESION_PRACTICA.Logica
                                                         Valor_FinalOscilar.RemoveAt(SenalesOscilantes.IndexOf(Nombre));
                                                         BoardOscilantes.RemoveAt(SenalesOscilantes.IndexOf(Nombre));
                                                         SenalesOscilantes.RemoveAt(SenalesOscilantes.IndexOf(Nombre));
-                                                       
+
                                                     }
                                                 }
                                             }
@@ -1067,7 +1093,7 @@ namespace SESION_PRACTICA.Logica
                                                         Valor_FinalOscilar.RemoveAt(SenalesOscilantes.IndexOf(NombreSenal));
                                                         BoardOscilantes.RemoveAt(SenalesOscilantes.IndexOf(NombreSenal));
                                                         SenalesOscilantes.RemoveAt(SenalesOscilantes.IndexOf(NombreSenal));
-                                                        
+
                                                     }
 
                                                 }
@@ -1096,7 +1122,7 @@ namespace SESION_PRACTICA.Logica
 
                        ;
                     }
-                   for (int i=0;i<BoardOscilantes.Capacity;i++)
+                    for (int i = 0; i < BoardOscilantes.Capacity; i++)
                     {
                         if (SenalesOscilantes.ElementAt(i).Contains("_AS"))
                         {
@@ -1112,7 +1138,7 @@ namespace SESION_PRACTICA.Logica
                             Valor_Oscilar = (Valor_FinalOscilar.ElementAt(i)) - (Valor_FinalOscilar.ElementAt(i)) * 0.5;
                             EscribirSenal(BoardOscilantes.ElementAt(i), SenalesOscilantes.ElementAt(i), true, Valor_Oscilar);
                             Console.WriteLine("Senal Escrita " + Valor_Oscilar.ToString() + " " + SenalesOscilantes.ElementAt(i));
-                           
+
                         }
                         else
                         {

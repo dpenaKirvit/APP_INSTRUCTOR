@@ -1,0 +1,7 @@
+D:\DAVID_PEÑA\KV_IS3\1.AZURE_DEVOPS\APP_INSTRUCTOR\ComunicacionServidorEIDS\bin\Debug\ComunicacionServidorEIDS.dll.config
+D:\DAVID_PEÑA\KV_IS3\1.AZURE_DEVOPS\APP_INSTRUCTOR\ComunicacionServidorEIDS\bin\Debug\ComunicacionServidorEIDS.dll
+D:\DAVID_PEÑA\KV_IS3\1.AZURE_DEVOPS\APP_INSTRUCTOR\ComunicacionServidorEIDS\bin\Debug\ComunicacionServidorEIDS.pdb
+D:\DAVID_PEÑA\KV_IS3\1.AZURE_DEVOPS\APP_INSTRUCTOR\ComunicacionServidorEIDS\obj\Debug\ComunicacionServidorEIDS.csprojAssemblyReference.cache
+D:\DAVID_PEÑA\KV_IS3\1.AZURE_DEVOPS\APP_INSTRUCTOR\ComunicacionServidorEIDS\obj\Debug\ComunicacionServidorEIDS.csproj.CoreCompileInputs.cache
+D:\DAVID_PEÑA\KV_IS3\1.AZURE_DEVOPS\APP_INSTRUCTOR\ComunicacionServidorEIDS\obj\Debug\ComunicacionServidorEIDS.dll
+D:\DAVID_PEÑA\KV_IS3\1.AZURE_DEVOPS\APP_INSTRUCTOR\ComunicacionServidorEIDS\obj\Debug\ComunicacionServidorEIDS.pdb

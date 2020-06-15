@@ -54,6 +54,7 @@ namespace SESION_PRACTICA
             else
             {
                 MessageBox.Show("La electrónica no se encuentra");
+                Driver_C130.Cerrar();
                 this.Close();
             }
         }
@@ -96,6 +97,7 @@ namespace SESION_PRACTICA
             Driver_C130.GetEtiquetaActual_In("EI_3_1_PHK_2_M_A_25");
             Driver_C130.GetEtiquetaActual_Out("EI_3_1_PHK_2_M_A_25");
             Driver_C130.NuevaReaccion("EI_3_1_PHK_2_M_A_25", "ON", 0, 0, 0, 0, false);
+            
            
             //Driver_C130.EscribirInstrumento("CS_4_1_PHK_2_M_A_25", "ON", 0, 0, 0, 0, true);
             Console.WriteLine("EI_3_1_PHK_2_M_A_25");

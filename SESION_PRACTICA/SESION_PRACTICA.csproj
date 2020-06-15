@@ -396,6 +396,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ComunicacionServidorEIDS\ComunicacionServidorEIDS.csproj">
+      <Project>{F14E2BBD-28B3-4B38-8318-ECE665DD8E2B}</Project>
+      <Name>ComunicacionServidorEIDS</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Electronica\Electronica.csproj">
       <Project>{3413575a-de08-41b7-815a-57be9910ac77}</Project>
       <Name>Electronica</Name>
