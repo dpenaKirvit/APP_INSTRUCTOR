@@ -40,7 +40,7 @@ namespace SESION_PRACTICA.Logica
         private List<string> BoardOscilantes;
         private List<string> SenalesOscilantes;
         private List<double> Valor_FinalOscilar;
-
+        Thread Comunicacion;
 
 
 
@@ -78,7 +78,8 @@ namespace SESION_PRACTICA.Logica
                     datosOmegas.Abrir();
                     procesoOmegas = new Thread(new ThreadStart(ProcesarOmegas));
                     procesar = true;
-                    conectarSocket();
+                    Comunicacion = new Thread(new ThreadStart(conectarSocket));
+                    Comunicacion.Start();
                     procesoOmegas.Start();
                     Console.WriteLine("Iniciar procesamiento Epsilon");
                 }
@@ -111,7 +112,7 @@ namespace SESION_PRACTICA.Logica
         {
             procesar = false;
             datosOmegas.Cerrar();
-            _socketEids.Close();
+            
         }
         public void DetectarDispositivos()
         {
@@ -850,21 +851,15 @@ namespace SESION_PRACTICA.Logica
                     }
                     break;
                 case "80":
-                    switch (nombre)
+
+                    if (nombre.Contains("_DS")) 
                     {
-                        case "EI_1_10_MN_1_AS":
-                            _socketEids.Send(Encoding.ASCII.GetBytes(nombre + ";"+valorAEscribirAn.ToString()));
-                        break;
-                        case "EI_1_1_MN_1_AS":
-                           _socketEids.Send(Encoding.ASCII.GetBytes(nombre + ";" + valorAEscribirAn.ToString()));
-                            break;
-                        case "OH_7_1_MN_2_AS":
-                            _socketEids.Send(Encoding.ASCII.GetBytes(nombre + ";" + valorAEscribirAn.ToString()));
-                            break;
-                        case "OH_7_2_MN_1_AS":
-                            _socketEids.Send(Encoding.ASCII.GetBytes(nombre + ";" + valorAEscribirAn.ToString()));
-                            break;
+                        _socketEids.Send(Encoding.ASCII.GetBytes(nombre + ";" + valorAEscribir.ToString()));
                     }
+                    if(nombre.Contains("_AS"))
+                    {
+                        _socketEids.Send(Encoding.ASCII.GetBytes(nombre + ";" + valorAEscribirAn.ToString()));
+                    }                                             
                     break;
             
             }
@@ -1122,7 +1117,7 @@ namespace SESION_PRACTICA.Logica
 
                        ;
                     }
-                    for (int i = 0; i < BoardOscilantes.Capacity; i++)
+                    for (int i = 0; i < BoardOscilantes.Count; i++)
                     {
                         if (SenalesOscilantes.ElementAt(i).Contains("_AS"))
                         {
@@ -3128,6 +3123,14 @@ namespace SESION_PRACTICA.Logica
 
         }
 
+        private void ComunicacionSocket() {
+            while (procesar) { 
+            
+            
+            }
+        
+        
+        }
 
 
         private void ProcesarOmegas()

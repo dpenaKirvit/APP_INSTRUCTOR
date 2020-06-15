@@ -111,6 +111,7 @@ namespace SESION_PRACTICA
             Driver_C130.NuevaReaccion("EI_3_1_PHK_2_M_A_25", "ON", 0, 0, 2, 0, false);
             Driver_C130.NuevaReaccion("OH_10_29_MN_1_79", "", 100, (float)51.3, 3, 0, true);
             Driver_C130.NuevaReaccion("OH_10_43_MN_1_81", "", 100, (float)20, 0, 0, true);
+            Driver_C130.NuevaReaccion("OH_7_1_MN_2_75", "", 100, (float)20, 0, 0, true);
         }
 
         private void B_Instrumento_frontal4_click(object sender, RoutedEventArgs e)
